@@ -3,33 +3,6 @@
 
 #include <cstddef>
 #include"base.hh"
-class logicLevel{
-    char x;
-    public:
-    logicLevel(char v){
-        x=v;
-    }
-    logicLevel operator&(logicLevel b) const{
-        logicLevel xv(0);
-        char v =b.val()*x,retv;
-        switch(v){
-            case -1:
-
-                break;
-            case 0:
-                break;
-            case 1:
-                break;
-            default:
-                ;
-
-        }
-    }
-
-    char val(){
-        return x;
-    }
-};
 class FaultType{
     public:
         bool faulty, fout;

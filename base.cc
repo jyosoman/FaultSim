@@ -1,7 +1,8 @@
 #include"base.hh"
 #include<iostream>
-Wire::Wire(bool v){
+Wire::Wire(bool v,logicModel*m){
     val=v;
+    lm=m;
 }
 Wire::Wire(){
     val=false;
@@ -26,10 +27,13 @@ bool Wire::Compare::operator()(logicModel* a, logicModel* b)
 void Wire::addList(logicModel*lm){
     lmlist.push_back(lm);
 }
-void Wire::set(bool v){
-    if(v!=val)
+bool Wire::set(bool v){
+    if(v!=val){
         trigger();
-    val=v;
+        val=v;
+        return true;
+    }
+    return false;
 }
 bool Wire::get(){
     return val;
@@ -43,6 +47,7 @@ bool logicModel::getOutput(){
 }
 logicModel::logicModel(int n=2){
     wout=new Wire;
+    wout->setMaster(this);
     wins=new Wire*[n];
     inCount=0;
     level=0;

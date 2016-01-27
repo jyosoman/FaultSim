@@ -4,10 +4,14 @@ class SRFlipFlop:public FaultType{
     bool qprev,qcprev;
     public:
     SRFlipFlop():clkS(),clkR(),outQ(),outQc(){
+        clkS.setClocked();
+        clkR.setClocked();
         outQ.setWire(clkS.getOutWire(),0);
         outQ.setWire(outQc.getOutWire(),1);
         outQc.setWire(clkR.getOutWire(),0);
         outQc.setWire(outQ.getOutWire(),1);
+        outQ.setLevel(1);
+        outQ.setLevel(1);
 
         qprev=true;
         qcprev=false;
@@ -39,6 +43,8 @@ class JKFlipFlop{
     bool qprev,qcprev;
     public:
     JKFlipFlop():tj(),tk(),outQ(),outQc(),qprev(true),qcprev(false){
+        outQ.setLevel(1);
+        outQc.setLevel(1);
     }
     void tick(bool j, bool k, bool clk){
         bool jout, kout;

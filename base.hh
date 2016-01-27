@@ -1,24 +1,20 @@
 #include<list>
 #include <queue>
+#include<vector>
 #ifndef __base_hh__
 #define __base_hh__
 class logicModel;
 class Wire{
     bool val;
     std::list<logicModel*> lmlist;
+    logicModel*lm;
     void trigger();
     public:
-    /* class Compare */
-    /* { */
-    /*     public: */
-    /*         bool operator() (logicModel* a, logicModel* b); */
-    /* }; */
-
-    /* static std::priority_queue<logicModel*, std::vector<logicModel*>, Compare> pq; */
-
-    Wire(bool v);
+    Wire(bool v,logicModel*lm=0);
     Wire();
-
+    void setMaster(logicModel*m){
+        lm=m;
+    }
     void set(bool v);
     void addList(logicModel* lm);
     bool get();
@@ -47,5 +43,14 @@ class logicModel{
     void connect(logicModel*lm);
     void setVal(bool v);
     Wire* getInWire(int id);
+};
+class logicBlock{
+    Wire**wouts,**wins;
+    int inCount, outCount;
+    bool clocked;
+    std::vector< <std::list<logicModel*> > levels;
+    std::vector<logicBlock*> nextBlocks;
+public:
+    
 };
 #endif

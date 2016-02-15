@@ -55,11 +55,10 @@ class baseNode{
 template<class T>
 class scheduler{
     std::vector<std::list<T*> > nList;
-    int curr,maxLevel;
+    int curr;
     public:
     scheduler() {
         curr=0;
-        maxLevel=10000;
     }
 
     void set(T*n){

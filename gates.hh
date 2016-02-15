@@ -2,15 +2,15 @@
 #define __gates__hh
 #include"base.hh"
 #include"transistor.hh"
-class InvertorGate:public FaultType,public logicModel{
+class InvertorGate:public FaultType,public node{
     PMOSTransistor pa;
     NMOSTransistor na;
     public:
-    InvertorGate():logicModel(1),pa(),na(){
+    InvertorGate():node(1),pa(),na(){
 
     }
     void output(){
-        setVal(output(getInWire(0)->get())); 
+        output(getInVal(0)); 
     }
 
     bool output(bool a){
@@ -18,7 +18,7 @@ class InvertorGate:public FaultType,public logicModel{
         if(faulty){
             out=getOut();
         }
-        setVal(out);
+        setVal(out,0);
         return out;
     }
 };

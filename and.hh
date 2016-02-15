@@ -2,55 +2,44 @@
 #define __and__hh
 #include"transistor.hh"
 #include"gates.hh"
-class NandGate:public FaultType,public logicModel{
+class NandGate:public FaultType,public node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     public:
-    NandGate():logicModel(2),pa(),pb(),na(),nb(){
+    NandGate():node(2),pa(),pb(),na(),nb(){
     }
     void output();
     bool output(bool a, bool b);
 };
-class TriNandGate:public FaultType,public logicModel{
+class TriNandGate:public FaultType,public node{
     PMOSTransistor pa,pb,pc;
     NMOSTransistor na,nb,nc;
     public:
-    TriNandGate():logicModel(3),pa(),pb(),pc(),na(),nb(),nc(){
+    TriNandGate():node(3),pa(),pb(),pc(),na(),nb(),nc(){
 
     }
     void output();
     bool output(bool a, bool b,bool c);
 };
-class MinpNandGate:public FaultType,public logicModel{
+template<unsigned int N> class MinpNandGate:public FaultType,public node{
     PMOSTransistor *pt;
     NMOSTransistor *nt;
+    bool in;
     int nin;
     public:
-    MinpNandGate(int n):logicModel(n){
-        pt=new PMOSTransistor[n];
-        nt=new NMOSTransistor[n];
-        nin=n;
+    MinpNandGate():node(N){
+        pt=new PMOSTransistor[N];
+        nt=new NMOSTransistor[N];
+        nin=N;
     }
     void output();
     bool output(bool *a);
-};
-
-
-class AndGate:public FaultType,public logicModel{
-    NandGate ng;
-    InvertorGate ig;
-    Wire *w,*wina,*winb;
-    public:
-    AndGate():logicModel(2),ng(),ig(){
-        w=ng.getOutWire();
-        ig.setWire(w,0);
-        wina=NULL;winb=NULL;
+    void setVal(bool a){
+        in=a;
     }
-    void output();
-    virtual void setWire(Wire*w, int id);
- 
-
-    bool output(bool a,bool b);
-    void tick();
+    void setVal(bool a,int i){
+        setVal(a);
+    }
 };
+
 #endif

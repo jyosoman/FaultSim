@@ -3,15 +3,15 @@
 #include<iostream>
 using namespace std;
 int main(){
-    Wire a(true);
-    Wire b(true);
+    OutWire a(true);
+    OutWire b(true);
     NandGate g;
-    g.setWire(&a);
-    g.setWire(&b);
+    g.setWire(&a,0);
+    g.setWire(&b,1);
     cout<<a.get()<<endl;
     a.set(false);
     cout<<a.get()<<endl;
-    Decoder d(4);
+    Decoder<4> d;
     
     return 0;
 }

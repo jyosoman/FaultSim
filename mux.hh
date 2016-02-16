@@ -1,6 +1,11 @@
 #include"gates.hh"
 #include"and.hh"
 #include"or.hh"
+template <unsigned int N> class Multiplexer{
+    typedef InvertorGate Invertor;
+    
+};
+/*
 class Multiplexer{
     class AndGateBlock{
         AndGate* gates;
@@ -72,3 +77,4 @@ class Multiplexer{
     bool tick(bool *inp,bool*signals);
 
 };
+*/

@@ -2,9 +2,9 @@
 void MinpNorGate::output(){
     bool arr[nin];
     for(int i=0;i<nin;i++){
-        arr[i]=getInWire(i)->get();
+        arr[i]=getWire(i)->get();
     }
-    setVal(output(arr));
+    setVal(output(arr),0);
 }
 
 bool MinpNorGate::output(bool *a){
@@ -20,12 +20,12 @@ bool MinpNorGate::output(bool *a){
     if(faulty){
         out=getOut();
     }
-    setVal(out);
+    setVal(out,0);
     return out;
 }
 
 void NorGate::output(){
-    setVal(output(getInWire(0)->get(),getInWire(1)->get())); 
+    setVal(output(getWire(0)->get(),getWire(1)->get()),0); 
 }
 
 bool NorGate::output(bool a, bool b){
@@ -33,23 +33,23 @@ bool NorGate::output(bool a, bool b){
     if(faulty){
         out=getOut();
     }
-    setVal(out);
+    setVal(out,0);
     return out;
 }
-void OrGate::setWire(Wire*w, int id){
-    logicModel::setWire(w,id);
+void OrGate::setWire(OutWire*w, int id){
+    node::setWire(w,id);
     ng.setWire(w,id);
 }
 
 void OrGate::output(){
-    setVal(output(getInWire(0)->get(),getInWire(1)->get())); 
+    setVal(output(getWire(0)->get(),getWire(1)->get()),0); 
 }
 
 
 bool OrGate::output(bool a,bool b){
     w->set(ng.output(a,b));
     bool out= ig.output(w->get());
-    setVal(out);
+    setVal(out,0);
     return out;
 }
 

@@ -1,6 +1,6 @@
 #include"transistor.hh"
 #include"gates.hh"
-class MinpNorGate:public FaultType,public logicModel{
+class MinpNorGate:public FaultType,public node{
     PMOSTransistor *pt;
     NMOSTransistor *nt;
     int nin;
@@ -14,7 +14,7 @@ class MinpNorGate:public FaultType,public logicModel{
 
     bool output(bool *a);
 };
-class NorGate:public FaultType,public logicModel{
+class NorGate:public FaultType,public node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     public:
@@ -25,16 +25,16 @@ class NorGate:public FaultType,public logicModel{
     bool output(bool a, bool b);
 };
 
-class OrGate:public FaultType,public logicModel{
+class OrGate:public FaultType,public node{
     NorGate ng;
     InvertorGate ig;
     Wire *w;
     public:
-    OrGate():logicModel(2),ng(),ig(){
-        w=ng.getOutWire();
+    OrGate():node(2),ng(),ig(){
+        w=ng.getWire(0);
         ig.setWire(w,0);
     }
-    virtual void setWire(Wire*w, int id);
+    virtual void setWire(OutWire*w, int id);
     
     void output();
 

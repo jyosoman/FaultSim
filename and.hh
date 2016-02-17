@@ -41,5 +41,26 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
         setVal(a);
     }
 };
-
+class AndGateBlock:public node{
+    AndGate* gates;
+    int gc;
+    public:
+    AndGateBlock(int n):node(n+1,1,NULL){
+        init(n);
+    }
+    AndGateBlock(){
+    }
+    void init(int n){
+        int b=n;
+        gates=new AndGate[b];
+        gc=b;
+    }
+    void output(){
+        bool last=ins[0].get();
+        for(int i=0;i<gc;i++){
+            last=gates[i].output(last,ins[i+1].get());
+        }
+        setVal(last,0);
+    }
+}; 
 #endif

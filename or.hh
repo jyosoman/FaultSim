@@ -1,3 +1,5 @@
+#ifndef __or__hh__
+#define __or__hh__
 #include"transistor.hh"
 #include"gates.hh"
 class MinpNorGate:public FaultType,public node{
@@ -28,9 +30,9 @@ class NorGate:public FaultType,public node{
 class OrGate:public FaultType,public node{
     NorGate ng;
     InvertorGate ig;
-    Wire *w;
     public:
     OrGate():node(2),ng(),ig(){
+        OutWire *w;
         w=ng.getWire(0);
         ig.setWire(w,0);
     }
@@ -41,3 +43,24 @@ class OrGate:public FaultType,public node{
 
     bool output(bool a,bool b);
 };
+class OrGateBlock:public node{
+    OrGate* gates;
+    int gc;
+    public:
+    OrGateBlock(int n){
+        init(n);
+    }
+    OrGateBlock(){
+    }
+    void init(int n){
+        gates=new OrGate[n];
+    }
+    void output(){
+        bool last=ins[0].get();
+        for(int i=0;i<gc;i++){
+            last=gates[i].output(last,ins[i+1].get());
+        }
+        setVal(last,0);
+    }
+};   
+#endif

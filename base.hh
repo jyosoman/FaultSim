@@ -152,7 +152,7 @@ class Network{
     void addEndNodes(node*endNode,int netid,int nodeid);
     /*
      * Connect two nodes inside the network. 
-     * Function call: first node, second node, first node port, second node port. 
+     * Function call: left node, right node, first node port, second node port. 
      * Bug: check of whether both nodes
      * are inside the network is not done. 
      * 

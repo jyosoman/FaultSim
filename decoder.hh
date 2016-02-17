@@ -31,3 +31,7 @@ template <unsigned int N> class Decoder:public Network{
         }        
     }
 };
+template<unsigned int N> class DecoderNode:public node{
+    DecoderNode<N>():node(N,1<<N,new Decoder<N>()){
+    }
+};

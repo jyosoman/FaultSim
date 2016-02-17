@@ -149,7 +149,7 @@ class Network{
      * Function call: node id, network wire id, node wire id. 
      * 
      */
-    void addEndNodes(node*endNode,int netid,int nodeid);
+    void addEndNode(node*endNode,int netid,int nodeid);
     /*
      * Connect two nodes inside the network. 
      * Function call: left node, right node, first node port, second node port. 

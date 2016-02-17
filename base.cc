@@ -56,7 +56,7 @@ void Network::addStartNode(node*inNode,int netid,int nodeid){
     portId[netid].push_back(nodeid);
 }
 
-void Network::addEndNodes(node*endNode,int netid,int nodeid){
+void Network::addEndNode(node*endNode,int netid,int nodeid){
     addNode(endNode);
     outnodes.push_back(endNode);
     (outWires)[netid]=endNode->getWire(nodeid);

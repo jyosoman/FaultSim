@@ -19,7 +19,7 @@ template <unsigned int N> class Decoder:public Network{
         nands.resize(outs);
         for(unsigned int i=0;i<outs;i++){
             nands[i]=new MinpNandGate<N>();
-            addEndNodes(nands[i],i,0);
+            addEndNode(nands[i],i,0);
             for(int j=0;j<N;j++){
                 if((i&(1<<j))!=0){
                     connect(invs[j],nands[i],0,j);

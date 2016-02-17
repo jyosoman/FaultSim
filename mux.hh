@@ -27,7 +27,8 @@ template <unsigned int in, unsigned int sig> class multiplexer:public Network{
             connect(&igs[i],&ob,0,i);
         }
 
-        addEndNodes(&ob,0,0);
+        addEndNode(&ob,0,0);
+        runBFS();
     }
 };
 template <unsigned int in, unsigned int sig> class MultiplexerNode:public node{

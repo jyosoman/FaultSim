@@ -22,4 +22,17 @@ class InvertorGate:public FaultType,public node{
         return out;
     }
 };
+class XORGate:public FaultType, public node{
+    PMOSTransistor pa,pb;
+    NMOSTransistor na,nb;
+    XORGate():node(2,1,NULL){
+    }
+    void output(){
+       setVal(output(getInVal(0),getInVal(1)),0); 
+    }
+    bool output(bool a,bool b){
+        bool ab=pa.output(a,true)|na.output(a,false);
+        return (pb.output(b,a)|nb.output(b,ab));
+    }
+};
 #endif

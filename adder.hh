@@ -2,7 +2,7 @@
 using namespace std;
 class FullAdder:public Network{
     NandGate* nands;
-    FullAdder():Network(3,1){
+    FullAdder():Network(3,2){
        nands=new NandGate[9];
        addStartNode(&nands[0],0,0);
        addStartNode(&nands[0],1,0);
@@ -29,6 +29,6 @@ class FullAdder:public Network{
 };
 class FullAdderNode:public node{
     public:
-    FullAdderNode():node(3,1,new FullAdder()){
+    FullAdderNode():node(3,2,new FullAdder()){
     }
 };

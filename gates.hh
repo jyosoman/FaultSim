@@ -35,4 +35,12 @@ class XORGate:public FaultType, public node{
         return (pb.output(b,a)|nb.output(b,ab));
     }
 };
+class BufferGate:public node{
+    public:
+        BufferGate():node(1,1){
+        }
+        void output(){
+            setVal(getInVal(0),0);
+        }
+};
 #endif

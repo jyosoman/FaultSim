@@ -3,23 +3,7 @@
 
 #include"and.hh"
 
-class AndGate:public FaultType,public node{
-    NandGate ng;
-    InvertorGate ig;
-//    Wire *w,*wina,*winb;
-    public:
-    AndGate():node(2),ng(),ig(){
-//        w=ng.getWire(0);
-        ig.setWire(ng.getWire(0),0);
-//        wina=NULL;winb=NULL;
-    }
-    void output();
-    virtual void setWire(OutWire*w, int id);
- 
 
-    bool output(bool a,bool b);
-    void tick();
-};
 
 void NandGate::output() {
     setVal(output(getInVal(0), getInVal(1)),0);

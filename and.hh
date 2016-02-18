@@ -41,6 +41,23 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
         setVal(a);
     }
 };
+class AndGate:public FaultType,public node{
+    NandGate ng;
+    InvertorGate ig;
+//    Wire *w,*wina,*winb;
+    public:
+    AndGate():node(2),ng(),ig(){
+//        w=ng.getWire(0);
+        ig.setWire(ng.getWire(0),0);
+//        wina=NULL;winb=NULL;
+    }
+    void output();
+    virtual void setWire(OutWire*w, int id);
+ 
+
+    bool output(bool a,bool b);
+    void tick();
+};
 class AndGateBlock:public node{
     AndGate* gates;
     int gc;

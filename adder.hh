@@ -32,3 +32,41 @@ class FullAdderNode:public node{
     FullAdderNode():node(3,2,new FullAdder()){
     }
 };
+class CLABlock:public node{
+    XORGate p;
+    AndGate g;
+    CLABlock():node(3,2,NULL){
+
+    }
+    void output(){
+        setVal(p.output(getInVal(0),getInVal(1)),0);
+        setVal(g.output(getInVal(0),getInVal(1)),1);
+    }
+};
+class BlackCell:public node{
+    AndGate a,b;
+    OrGate c;
+    public:
+    BlackCell():node(4,2){
+    }
+    void output(){
+        setVal(c.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
+        setVal(b.output(getInVal(2),getInVal(3)),1);
+    }
+};
+class GrayCell:public node{
+    OrGate b;
+    AndGate a;
+    GrayCell():node(3,2){}
+    void output(){
+        setVal(b.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
+    }
+};
+class KSAdder:public Network{
+    BlackCell* bcells;
+    GrayCell* gcells;
+    BufferGate* buffers;
+    KSAdder():Network(32,33){
+
+    }
+};

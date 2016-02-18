@@ -7,7 +7,7 @@ class MinpNorGate:public FaultType,public node{
     NMOSTransistor *nt;
     int nin;
     public:
-    MinpNorGate(int n):logicModel(n){
+    MinpNorGate(int n):node(n){
         pt=new PMOSTransistor[n];
         nt=new NMOSTransistor[n];
         nin=n;
@@ -20,7 +20,7 @@ class NorGate:public FaultType,public node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     public:
-    NorGate():logicModel(2),pa(),pb(),na(),nb(){
+    NorGate():node(2),pa(),pb(),na(),nb(){
     }
     void output();
 

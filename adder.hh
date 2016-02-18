@@ -67,6 +67,6 @@ class KSAdder:public Network{
     GrayCell* gcells;
     BufferGate* buffers;
     KSAdder():Network(32,33){
-
+        
     }
 };

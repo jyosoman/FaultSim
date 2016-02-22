@@ -176,6 +176,11 @@ class node:public baseNode{
     vector<OutWire*> *outWires;
     scheduler<node>* sch;
     Network *internalNetwork;    
+    protected:
+    void setVal(bool v,int id){
+        (*outWires)[id]->set(v);
+    }
+
     public:
     node(int in=2, int out=1,Network*lb=NULL);
     void setNext(node* next,int xid) ;
@@ -194,9 +199,6 @@ class node:public baseNode{
     }
 
     void setLevel(int level) ;
-    void setVal(bool v,int id){
-        (*outWires)[id]->set(v);
-    }
     /* Functions to allow scheduling
     */
     int getLevel();

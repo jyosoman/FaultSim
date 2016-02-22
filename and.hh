@@ -73,9 +73,9 @@ class AndGateBlock:public node{
         gc=b;
     }
     void output(){
-        bool last=ins[0].get();
+        bool last=getInVal(0);
         for(int i=0;i<gc;i++){
-            last=gates[i].output(last,ins[i+1].get());
+            last=gates[i].output(last,getInVal(i+1));
         }
         setVal(last,0);
     }

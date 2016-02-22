@@ -82,7 +82,11 @@ class scheduler{
         }
     }
 };
-
+/*
+ *  A network should always be inside a node, else bfs will not be run on it. 
+ *  Also, for good coding style, implement network inside a node declaration. 
+ *
+ */ 
 class node;
 class Network{
     friend class node;

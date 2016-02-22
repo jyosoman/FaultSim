@@ -62,11 +62,19 @@ class GrayCell:public node{
         setVal(b.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
     }
 };
+
 class KSAdder:public Network{
     BlackCell* bcells;
     GrayCell* gcells;
     BufferGate* buffers;
     KSAdder():Network(32,33){
-        
+        gcells=new GrayCell[31];
+        buffers=new BufferGate[16];
+        bcells=new BlackCell[98];        
+
     }
 };
+
+
+
+

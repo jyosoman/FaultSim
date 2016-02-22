@@ -126,6 +126,7 @@ node::node(int in, int out,Network*lb){
     if(lb!=NULL){
         inWires=&lb->inwires;
         outWires=&lb->outWires;
+        lb->runBFS();
     }else{
         inWires=new vector<InWire*>();
         inWires->resize(in);

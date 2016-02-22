@@ -28,7 +28,6 @@ template <unsigned int in, unsigned int sig> class multiplexer:public Network{
         }
 
         addEndNode(&ob,0,0);
-        runBFS();
     }
 };
 template <unsigned int in, unsigned int sig> class MultiplexerNode:public node{

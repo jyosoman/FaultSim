@@ -73,21 +73,24 @@ void Network::connect(OutWire* w,int inid){
     }
 }
 void Network::runBFS(){
-    std::cout<<"Running BFS now"<<std::endl;
+    /* std::cout<<"Running BFS now"<<std::endl; */
     list<node*> bfsTree,nextList;
     nodeVectorIterator iter=outnodes.begin(),end=outnodes.end();
     nodeListIterator iter2;
     int level=1;
     for(;iter!=end;iter++){
+        /* std::cout<<"placing node"<<std::endl; */
         nextList.push_back(*iter);
         (*iter)->setLevel(level);
     }
+    level++;
     while(true){
         for(iter2=nextList.begin();iter2!=nextList.end();iter2++){
             nodeListIterator iterm=connections[*iter2].begin(),iend=connections[*iter2].end();
             for(;iterm!=iend;iterm++){
                 if((*iterm)->getLevel()==0){
                     (*iterm)->setLevel(level);
+                    /* std::cout<<"placing node2"<<std::endl; */
                     bfsTree.push_back(*iterm);
                 }
             }
@@ -100,6 +103,7 @@ void Network::runBFS(){
                 if((*iterm)->getLevel()==0){
                     (*iterm)->setLevel(level);
                     nextList.push_back(*iterm);
+                    /* std::cout<<"placing node3"<<std::endl; */
                 }
             }
         }
@@ -110,6 +114,7 @@ void Network::runBFS(){
     }
     for(map<node*,list<node*> >::iterator it = connections.begin(); it != connections.end(); ++it) {
         it->first->setLevel(level-it->first->getLevel());
+        /* cout<<it->first->getLevel()<<" "<<endl; */
         it->second.clear();
     }
     connections.clear();

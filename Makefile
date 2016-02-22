@@ -14,4 +14,4 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	    $(CC) $(CFLAGS) $< -o $@
 clean:
-	rm $(OBJECTS)
+	rm $(OBJECTS) $(EXECUTABLE)

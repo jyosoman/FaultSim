@@ -24,7 +24,6 @@ class FullAdder:public Network{
        connect(&nands[4],&nands[8],0,0);
        addEndNode(&nands[7],0,0);
        addEndNode(&nands[8],1,0);
-       runBFS();
     }
 };
 class FullAdderNode:public node{

@@ -180,30 +180,30 @@ class node:public baseNode{
     void setVal(bool v,int id){
         (*outWires)[id]->set(v);
     }
-
-    public:
-    node(int in=2, int out=1,Network*lb=NULL);
     void setNext(node* next,int xid) ;
 
-    void setSch(scheduler<node>* sch) ;
+    bool getInVal(int id){
+        return (*inWires)[id]->get();
+    }
 
+
+    void setLm(Network* lm) ;
+    public:
+    node(int in=2, int out=1,Network*lb=NULL);
     bool isChanged() const ;
     bool isChanged(int i) const ;
 
+    void setSch(scheduler<node>* sch) ;
     void connect(node*nm,int id,int yid);
 
     OutWire* getWire(int id);
     void setWire(OutWire*w,int id);
-    bool getInVal(int id){
-        return (*inWires)[id]->get();
-    }
 
     void setLevel(int level) ;
     /* Functions to allow scheduling
     */
     int getLevel();
     virtual void output();
-    void setLm(Network* lm) ;
 };
 
 #endif

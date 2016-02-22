@@ -67,12 +67,13 @@ void Network::connect(node*a,node*b,int ida,int idb){
     connections[b].push_back(a);
 }
 void Network::connect(OutWire* w,int inid){
-        inwires[inid]->setWire(w);
-        for(int i=0;i<intConns.size();i++){
-            intConns[inid][i]->setWire(w,portId[inid][i]);
-        }
+    inwires[inid]->setWire(w);
+    for(int i=0;i<intConns.size();i++){
+        intConns[inid][i]->setWire(w,portId[inid][i]);
     }
+}
 void Network::runBFS(){
+    std::cout<<"Running BFS now"<<std::endl;
     list<node*> bfsTree,nextList;
     nodeVectorIterator iter=outnodes.begin(),end=outnodes.end();
     nodeListIterator iter2;
@@ -107,21 +108,21 @@ void Network::runBFS(){
         bfsTree.clear();
         level++;
     }
-   for(map<node*,list<node*> >::iterator it = connections.begin(); it != connections.end(); ++it) {
-       it->first->setLevel(level-it->first->getLevel());
-       it->second.clear();
-   }
-   connections.clear();
+    for(map<node*,list<node*> >::iterator it = connections.begin(); it != connections.end(); ++it) {
+        it->first->setLevel(level-it->first->getLevel());
+        it->second.clear();
+    }
+    connections.clear();
 }
 
 node::node(int in, int out,Network*lb){
 
     //    inWires.resize(in);
-//    outWires.resize(out);
+    //    outWires.resize(out);
     next.resize(out);
-//    for (int i=0;i<out;i++){
-//        outWires[i]=new Wire;
-//    }
+    //    for (int i=0;i<out;i++){
+    //        outWires[i]=new Wire;
+    //    }
     internalNetwork=lb;
     if(lb!=NULL){
         inWires=&lb->inwires;
@@ -183,13 +184,11 @@ void node::setWire(OutWire*w,int id){
 
 void node::setLevel(int level) {
     this->level = level;
-    if(internalNetwork!=NULL)
-        internalNetwork->runBFS();
 }
 
 /* 
  * Functions to allow scheduling
-*/
+ */
 
 int node::getLevel() {
     return level;

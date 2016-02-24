@@ -69,7 +69,7 @@ void Network::connect(node*a,node*b,int ida,int idb){
 }
 void Network::connect(OutWire* w,int inid){
     inwires[inid]->setWire(w);
-    for(int i=0;i<intConns.size();i++){
+    for(int i=0;i<intConns[inid].size();i++){
         intConns[inid][i]->setWire(w,portId[inid][i]);
     }
 }
@@ -121,11 +121,9 @@ void Network::runBFS(){
     connections.clear();
 }
 void node::resize(int in,int out){
-    
     next.resize(out);
     if(internalNetwork!=NULL){
     }else{
-        std::cout<<in<<std::endl;
         inWires=new vector<InWire*>();
 //        inWires->resize(in);
         for(int i=0;i<in;i++){
@@ -133,7 +131,7 @@ void node::resize(int in,int out){
         }
         outWires=new vector<OutWire*>();
 //        outWires->resize(out);
-        for(int i=0;i<in;i++){
+        for(int i=0;i<out;i++){
             outWires->push_back(new OutWire());
         }
 

@@ -57,12 +57,9 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
 class AndGate:public FaultType,public node{
     NandGate ng;
     InvertorGate ig;
-//    Wire *w,*wina,*winb;
     public:
     AndGate():node(2),ng(),ig(){
-//        w=ng.getWire(0);
         ig.setWire(ng.getWire(0),0);
-//        wina=NULL;winb=NULL;
     }
     void output();
     virtual void setWire(OutWire*w, int id);
@@ -78,15 +75,14 @@ class AndGateBlock:public node{
     AndGate* gates;
     int gc;
     public:
-    AndGateBlock(int n):node(n+1,1,NULL){
+    AndGateBlock(int n):node(n,1,NULL){
         init(n);
     }
     AndGateBlock(){
     }
     void init(int n){
-        int b=n;
-        gates=new AndGate[b];
-        gc=b;
+        gc=n-1;
+        gates=new AndGate[gc];
         node::resize(n,1);
     }
     void output(){

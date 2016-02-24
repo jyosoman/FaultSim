@@ -58,13 +58,14 @@ class OrGateBlock:public node{
     OrGate* gates;
     int gc;
     public:
-    OrGateBlock(int n){
+    OrGateBlock(int n):node(n,1,NULL){
         init(n);
     }
     OrGateBlock(){
     }
     void init(int n){
-        gates=new OrGate[n];
+        gc=n-1;
+        gates=new OrGate[n-1];
         node::resize(n,1);
     }
     void output(){

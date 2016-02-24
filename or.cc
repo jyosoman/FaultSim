@@ -1,4 +1,5 @@
 #include"or.hh"
+#include<cstdio>
 void MinpNorGate::output(){
     bool arr[nin];
     for(int i=0;i<nin;i++){
@@ -25,7 +26,7 @@ bool MinpNorGate::output(bool *a){
 }
 
 void NorGate::output(){
-    setVal(output(getWire(0)->get(),getWire(1)->get()),0); 
+    output(getInVal(0),getInVal(1)); 
 }
 
 bool NorGate::output(bool a, bool b){
@@ -42,12 +43,12 @@ void OrGate::setWire(OutWire*w, int id){
 }
 
 void OrGate::output(){
-    setVal(output(getWire(0)->get(),getWire(1)->get()),0); 
+    output(getInVal(0),getInVal(1)); 
 }
 
 
 bool OrGate::output(bool a,bool b){
-    ng.output();
+    ng.output(a,b);
     ig.output();
     setVal(ig.getWire(0)->get(),0);
 

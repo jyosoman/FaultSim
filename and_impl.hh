@@ -6,7 +6,7 @@
 
 
 void NandGate::output() {
-    setVal(output(getInVal(0), getInVal(1)),0);
+    output(getInVal(0), getInVal(1));
 }
 
 bool NandGate::output(bool a, bool b) {
@@ -14,11 +14,12 @@ bool NandGate::output(bool a, bool b) {
     if (faulty) {
         out = getOut();
     }
+    setVal(out,0);
     return out;
 }
 
 void TriNandGate::output() {
-    setVal(output(getWire(0)->get(), getWire(1)->get(), getWire(2)->get()), 0);
+    output(getInVal(0),getInVal(1),getInVal(2));// getWire(1)->get(), getWire(2)->get());
 }
 
 bool TriNandGate::output(bool a, bool b, bool c) {
@@ -58,8 +59,7 @@ bool MinpNandGate<N>::output(bool *a) {
 }
 
 void AndGate::output() {
-    tick();
-     //setVal(output(getInVal(0), getInVal(1)), 0);
+     output(getInVal(0), getInVal(1));
 }
 
 void AndGate::setWire(OutWire*w, int id) {
@@ -78,6 +78,7 @@ bool AndGate::output(bool a, bool b) {
 void AndGate::tick() {
     ng.output();
     ig.output();
+    setVal(ig.getWire(0)->get(),0);
 }
 
 #endif

@@ -4,6 +4,7 @@
 #include<vector>
 #include<list>
 #include<map>
+#include<cstdio>
 using namespace std;
 class Wire{
     public:
@@ -205,6 +206,24 @@ class node:public baseNode{
     */
     int getLevel();
     virtual void output();
+    void test(){
+        std::cout<<"Testing"<<'\n';
+        for(int i=0;i<1<<(inWires->size());i++){
+            for(int j=0;j<inWires->size();j++){
+                if(i&1<<j){
+                    (*inWires)[j]->getWire()->set(true);
+                }
+                else{
+                    (*inWires)[j]->getWire()->set(false);
+                }
+            }
+            output();
+            for(int j=0;j<outWires->size();j++){
+                std::cout<<"Test: "<<i<<" ";
+                std::cout<<std::boolalpha<<getWire(j)->get()<<'\n';
+            }
+        }
+    }
 };
 
 #endif

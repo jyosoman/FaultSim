@@ -7,10 +7,13 @@ class InvertorGate:public FaultType,public node{
     NMOSTransistor na;
     public:
     InvertorGate():node(1),pa(),na(){
-
+        printName();
     }
     void output(){
         output(getInVal(0)); 
+    }
+    void printName(){
+        std::cout<<"Invertor "<<std::endl;
     }
 
     bool output(bool a){

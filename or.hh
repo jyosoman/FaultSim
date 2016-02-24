@@ -13,6 +13,9 @@ class MinpNorGate:public FaultType,public node{
         nin=n;
     }
     void output();
+    void printName(){
+        std::cout<<"M inp nor Gate"<<std::endl;
+    }
 
     bool output(bool *a);
 };
@@ -25,6 +28,10 @@ class NorGate:public FaultType,public node{
     void output();
 
     bool output(bool a, bool b);
+    void printName(){
+        std::cout<<"Nor Gate"<<std::endl;
+    }
+
 };
 
 class OrGate:public FaultType,public node{
@@ -42,6 +49,10 @@ class OrGate:public FaultType,public node{
 
 
     bool output(bool a,bool b);
+    void printName(){
+        std::cout<<"Or Gate"<<std::endl;
+    }
+
 };
 class OrGateBlock:public node{
     OrGate* gates;
@@ -54,13 +65,18 @@ class OrGateBlock:public node{
     }
     void init(int n){
         gates=new OrGate[n];
+        node::resize(n,1);
     }
     void output(){
-        bool last=ins[0].get();
+        bool last=getInVal(0);
         for(int i=0;i<gc;i++){
-            last=gates[i].output(last,ins[i+1].get());
+            last=gates[i].output(last,getInVal(i+1));
         }
         setVal(last,0);
     }
+    void printName(){
+        std::cout<<"Or Gate Block"<<std::endl;
+    }
+
 };   
 #endif

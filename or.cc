@@ -47,9 +47,11 @@ void OrGate::output(){
 
 
 bool OrGate::output(bool a,bool b){
-    w->set(ng.output(a,b));
-    bool out= ig.output(w->get());
-    setVal(out,0);
-    return out;
+    ng.output();
+    ig.output();
+    setVal(ig.getWire(0)->get(),0);
+
+    return ig.getWire(0)->get();
+
 }
 

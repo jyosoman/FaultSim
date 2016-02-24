@@ -6,6 +6,7 @@ OutWire::OutWire(bool v){
 }
 
 OutWire::OutWire(){
+    val=false;
     changed=false;
 }
 
@@ -119,7 +120,25 @@ void Network::runBFS(){
     }
     connections.clear();
 }
+void node::resize(int in,int out){
+    
+    next.resize(out);
+    if(internalNetwork!=NULL){
+    }else{
+        std::cout<<in<<std::endl;
+        inWires=new vector<InWire*>();
+//        inWires->resize(in);
+        for(int i=0;i<in;i++){
+            inWires->push_back(new InWire());
+        }
+        outWires=new vector<OutWire*>();
+//        outWires->resize(out);
+        for(int i=0;i<in;i++){
+            outWires->push_back(new OutWire());
+        }
 
+    }
+}
 node::node(int in, int out,Network*lb){
 
     //    inWires.resize(in);

@@ -4,19 +4,17 @@ class SRFlipFlop:public FaultType{
     bool qprev,qcprev;
     public:
     SRFlipFlop():clkS(),clkR(),outQ(),outQc(){
-        clkS.setClocked();
-        clkR.setClocked();
-        outQ.setWire(clkS.getOutWire(),0);
-        outQ.setWire(outQc.getOutWire(),1);
-        outQc.setWire(clkR.getOutWire(),0);
-        outQc.setWire(outQ.getOutWire(),1);
+        outQ.setWire(clkS.getWire(0),0);
+        outQ.setWire(outQc.getWire(0),1);
+        outQc.setWire(clkR.getWire(0),0);
+        outQc.setWire(outQ.getWire(0),1);
         outQ.setLevel(1);
         outQ.setLevel(1);
 
         qprev=true;
         qcprev=false;
     }
-    virtual void setWire(Wire*w,int id);
+    virtual void setWire(OutWire*w,int id);
     void tick(bool s, bool r, bool clk);
     void output();
     bool outputQ();

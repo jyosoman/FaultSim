@@ -1,5 +1,5 @@
 #include"flipFlop.hh"
-void SRFlipFlop::setWire(Wire*w,int id){
+void SRFlipFlop::setWire(OutWire*w,int id){
     switch (id){
         case 0:
             clkS.setWire(w,0);

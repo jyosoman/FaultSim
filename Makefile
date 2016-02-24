@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -g
 LDFLAGS=
-SOURCES=and.cc base.cc main.cc transistor.cc
+SOURCES=and.cc base.cc main.cc transistor.cc or.cc
 OBJECTS=$(SOURCES:.cc=.o)
 EXECUTABLE=memManaged
 

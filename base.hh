@@ -186,19 +186,20 @@ class node:public baseNode{
         return (*inWires)[id]->get();
     }
 
-
+    void resize(int in,int out);
+    
     void setLm(Network* lm) ;
     public:
     node(int in=2, int out=1,Network*lb=NULL);
     bool isChanged() const ;
     bool isChanged(int i) const ;
-
+    virtual void printName(){
+    }
     void setSch(scheduler<node>* sch) ;
     void connect(node*nm,int id,int yid);
 
     OutWire* getWire(int id);
     void setWire(OutWire*w,int id);
-
     void setLevel(int level) ;
     /* Functions to allow scheduling
     */

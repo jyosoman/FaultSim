@@ -9,7 +9,12 @@ class NandGate:public FaultType,public node{
     NandGate():node(2),pa(),pb(),na(),nb(){
     }
     void output();
-    bool output(bool a, bool b);
+    bool output(bool a, bool b);  
+    void printName(){
+        std::cout<<"Nand Gate"<<std::endl;
+    }
+
+
 };
 class TriNandGate:public FaultType,public node{
     PMOSTransistor pa,pb,pc;
@@ -20,6 +25,10 @@ class TriNandGate:public FaultType,public node{
     }
     void output();
     bool output(bool a, bool b,bool c);
+    void printName(){
+        std::cout<<"TriNand Gate"<<std::endl;
+    }
+
 };
 template<unsigned int N> class MinpNandGate:public FaultType,public node{
     PMOSTransistor *pt;
@@ -34,6 +43,10 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
     }
     void output();
     bool output(bool *a);
+    void printName(){
+        std::cout<<"M inp Nand Gate"<<std::endl;
+    }
+
     void setVal(bool a){
         in=a;
     }
@@ -53,7 +66,10 @@ class AndGate:public FaultType,public node{
     }
     void output();
     virtual void setWire(OutWire*w, int id);
- 
+     void printName(){
+        std::cout<<"And Gate"<<std::endl;
+    }
+
 
     bool output(bool a,bool b);
     void tick();
@@ -71,6 +87,7 @@ class AndGateBlock:public node{
         int b=n;
         gates=new AndGate[b];
         gc=b;
+        node::resize(n,1);
     }
     void output(){
         bool last=getInVal(0);
@@ -79,5 +96,9 @@ class AndGateBlock:public node{
         }
         setVal(last,0);
     }
+    void printName(){
+        std::cout<<"And Gate Block"<<std::endl;
+    }
+
 }; 
 #endif

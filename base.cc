@@ -7,7 +7,7 @@ OutWire::OutWire(bool v){
 
 OutWire::OutWire(){
     val=false;
-    changed=false;
+    changed=true;
 }
 
 void OutWire::set(bool v){
@@ -163,6 +163,7 @@ node::node(int in, int out,Network*lb){
         }
 
     }
+    output();
 }
 
 void node::setNext(node* next,int xid) {
@@ -199,6 +200,7 @@ OutWire* node::getWire(int id){
 
 void node::setWire(OutWire*w,int id){
     (*inWires)[id]->setWire(w);
+    output();
     if(internalNetwork!=NULL){
         internalNetwork->connect(w,id);        
     }

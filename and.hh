@@ -93,6 +93,7 @@ class AndGateBlock:public node{
     }
     void output(){
         bool last=getInVal(0);
+
         for(int i=0;i<gc;i++){
             last=gates[i].output(last,getInVal(i+1));
         }
@@ -100,7 +101,7 @@ class AndGateBlock:public node{
         node::output();
     }
     void printName(){
-        cout<<getLevel()<<'\t';
+//        cout<<getLevel()<<'\t';
         std::cout<<"And Gate Block"<<'\t';
         node::printName();
     }

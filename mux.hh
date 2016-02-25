@@ -15,18 +15,18 @@ template <unsigned int ina, unsigned int siga> class Multiplexer:public node{
         public:
         MultiplexerNet<in,sig>():Network(in+sig,1){
             igs=new InvertorGate[sig];
-            for(int i=0;i<sig;i++){
+            for(unsigned int i=0;i<sig;i++){
                 addStartNode(&igs[i],in+i,0);
                 igs[i].setNodeId(i);
             }
             ngs=new AndGateBlock[in];
             ob.init(in);
-            for(int i=0;i<in;i++){
+            for(unsigned int i=0;i<in;i++){
                 ngs[i].init(sig+1);
                 ngs[i].setNodeId(i);
                 addStartNode(&ngs[i],i,0);
-                int sv=1;
-                for(int j=0;j<sig;j++){
+                unsigned int sv=1;
+                for(unsigned int j=0;j<sig;j++){
                     if((sv&i)==sv){
                         addStartNode(&ngs[i],j+in,j+1);
                     }else{
@@ -41,6 +41,7 @@ template <unsigned int ina, unsigned int siga> class Multiplexer:public node{
     };
     public:
     Multiplexer():node(ina+siga,1,new MultiplexerNet<ina,siga>()){
+
     }
     void printName(){
         std::cout<<"Multiplexer"<<std::endl;

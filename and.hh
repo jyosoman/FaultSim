@@ -35,7 +35,6 @@ class TriNandGate:public FaultType,public node{
 template<unsigned int N> class MinpNandGate:public FaultType,public node{
     PMOSTransistor *pt;
     NMOSTransistor *nt;
-    bool in;
     int nin;
     public:
     MinpNandGate():node(N){
@@ -49,13 +48,6 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
         std::cout<<"M inp Nand Gate"<<std::endl;
         node::printName();
     }
-
-    void setVal(bool a){
-        in=a;
-    }
-    void setVal(bool a,int i){
-        setVal(a);
-    }
 };
 class AndGate:public FaultType,public node{
     NandGate ng;
@@ -65,7 +57,6 @@ class AndGate:public FaultType,public node{
         /* ng.connect(&ig,0,0); */
         ig.setWire(ng.getWire(0),0);
     }
-    void outputSolo();
     void output();
     virtual void setWire(OutWire*w, int id);
      void printName(){

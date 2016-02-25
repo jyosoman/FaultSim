@@ -30,10 +30,10 @@ bool OutWire::get(){
 
 
 void Network::output(){
-    for(int i=0;i<inwires.size();i++){
+    for(unsigned int i=0;i<inwires.size();i++){
         if(inwires[i]->isChanged())
         {
-            for(int j=0;j<intConns[i].size();j++){
+            for(unsigned int j=0;j<intConns[i].size();j++){
                 sch.set(intConns[i][j]);
             }
         }
@@ -70,7 +70,7 @@ void Network::connect(node*a,node*b,int ida,int idb){
 }
 void Network::connect(OutWire* w,int inid){
     inwires[inid]->setWire(w);
-    for(int i=0;i<intConns[inid].size();i++){
+    for(unsigned int i=0;i<intConns[inid].size();i++){
         intConns[inid][i]->setWire(w,portId[inid][i]);
     }
 }
@@ -133,8 +133,8 @@ void node::resize(int in,int out){
         for(int i=0;i<out;i++){
             outWires->push_back(new OutWire());
         }
-
     }
+    output();
 }
 node::node(int in, int out,Network*lb){
     lastSched=-1;
@@ -167,7 +167,7 @@ node::node(int in, int out,Network*lb){
 }
 
 void node::setNext(node* next,int xid) {
-    if(xid<this->next.size())           {
+    if(((unsigned int)xid)<this->next.size())           {
         this->next[xid].push_back(next);
     }
 }
@@ -177,7 +177,7 @@ void node::setSch(scheduler<node>* sch) {
 }
 
 bool node::isChanged() const {
-    for(int i=0;i<outWires->size();i++)
+    for(unsigned int i=0;i<outWires->size();i++)
         if((*outWires)[i]->isChanged())
             return true;
     return false;
@@ -200,13 +200,13 @@ OutWire* node::getWire(int id){
 
 void node::setWire(OutWire*w,int id){
     (*inWires)[id]->setWire(w);
-    output();
+//    output();
     if(internalNetwork!=NULL){
         internalNetwork->connect(w,id);        
     }
 }
 
-void node::setLevel(int level) {
+void node::setLevel(unsigned int level) {
     this->level = level;
 }
 
@@ -214,29 +214,26 @@ void node::setLevel(int level) {
  * Functions to allow scheduling
  */
 
-int node::getLevel() {
+unsigned int node::getLevel() {
     return level;
 }
-void node::outputSolo(){
-    if(internalNetwork!=NULL)
-        internalNetwork->output();
-}
+
 
 void node::output(){
     if(internalNetwork!=NULL)
         internalNetwork->output();
     if(sch!=NULL){
-        for(int i=0;i<(*outWires).size();i++){
+        for(unsigned int i=0;i<(*outWires).size();i++){
             if(getWire(i)->isChanged()){
-                for(int j=0;j<next[i].size();j++){
+                for(unsigned int j=0;j<next[i].size();j++){
                     sch->set(next[i][j]);
                 }
             }
         }
     }else{
-        for(int i=0;i<(*outWires).size();i++){
+        for(unsigned int i=0;i<(*outWires).size();i++){
             if(getWire(i)->isChanged()){
-                for(int j=0;j<next[i].size();j++){
+                for(unsigned int j=0;j<next[i].size();j++){
                     next[i][j]->output();
                 }
             }

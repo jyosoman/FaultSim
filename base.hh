@@ -27,6 +27,7 @@ class InWire:public Wire{
    OutWire*  wire;
     public:
    InWire(){
+       wire=NULL;
    }
    InWire(OutWire*w){
        wire=w;
@@ -50,13 +51,13 @@ class InWire:public Wire{
 
 class baseNode{
     public:
-        virtual int getLevel()=0;
+        virtual unsigned int getLevel()=0;
         virtual void output()=0;
 };
 template<class T>
 class scheduler{
     std::vector<std::list<T*> > nList;
-    int curr;
+    unsigned int curr;
     long long int currSched;
     public:
     scheduler() {
@@ -87,6 +88,7 @@ class scheduler{
                 nList[curr].pop_front();
             }
         }
+        curr=0;
         currSched++;
     }
 };
@@ -179,7 +181,8 @@ class Network{
 };
 class node:public baseNode{
     std::vector<std::vector<node*> > next;
-    int level,nodeid;
+    unsigned int level;
+    int nodeid;
     long long int lastSched;
     vector<InWire*> *inWires;
     vector<OutWire*> *outWires;
@@ -222,16 +225,15 @@ class node:public baseNode{
 
     OutWire* getWire(int id);
     void setWire(OutWire*w,int id);
-    void setLevel(int level) ;
+    void setLevel(unsigned int level) ;
     /* Functions to allow scheduling
     */
-    int getLevel();
+    unsigned int getLevel();
     virtual void output();
-    virtual void outputSolo();
     void test(){
         std::cout<<"Testing"<<'\n';
         for(int i=0;i<1<<(inWires->size());i++){
-            for(int j=0;j<inWires->size();j++){
+            for(unsigned int j=0;j<inWires->size();j++){
                 if(i&1<<j){
                     (*inWires)[j]->getWire()->set(true);
                 }
@@ -240,8 +242,8 @@ class node:public baseNode{
                 }
             }
             output();
-            for(int j=0;j<outWires->size();j++){
-                std::cout<<"Test: "<<i<<" ";
+            for(unsigned int j=0;j<outWires->size();j++){
+                std::cout<<"Test: "<<i<<" "<<j<<" ";
                 std::cout<<std::boolalpha<<getWire(j)->get()<<'\n';
             }
         }

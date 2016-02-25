@@ -35,12 +35,14 @@ bool TriNandGate::output(bool a, bool b, bool c) {
 
 template<unsigned int N>
 void MinpNandGate<N>::output() {
-    bool arr[nin];
-    for (int i = 0; i < nin; i++) {
-        arr[i] = getInVal(i);
+    bool a1=false,a2=false;
+    for(int i=0;i<nin;i++){
+        a1=pt[i].output(getInVal(i),true)|a1;
+        a2=nt[i].output(getInVal(i),a2);
     }
-    setVal(output(arr));
-        node::output();
+    bool res=a1|a2;
+    setVal(res,0);
+    node::output();
 }
 
 template<unsigned int N>
@@ -61,9 +63,7 @@ bool MinpNandGate<N>::output(bool *a) {
     return out;
 }
 
-void AndGate::outputSolo() {
-     output(getInVal(0), getInVal(1));
-}
+
 void AndGate::output() {
      output(getInVal(0), getInVal(1));
         node::output();

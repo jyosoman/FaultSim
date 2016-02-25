@@ -4,26 +4,29 @@
 #include<vector>
 using namespace std;
 
-template<unsigned int N> class DecoderNode:public node{
-    template <unsigned int R> class Decoder:public Network{
+template<unsigned int N> class Decoder:public node{
+    template <unsigned int R> class DecoderNet:public Network{
         typedef InvertorGate Invertor;
         vector<Invertor*> invs;
         vector<MinpNandGate<R>*> nands;
         vector<Invertor*> outGates;
         public:
-        Decoder<R>():Network(R,1<<R){
+        DecoderNet<R>():Network(R,1<<R){
             invs.resize(R);
             for(unsigned int i=0;i<R;i++){
                 invs[i]=new Invertor();
                 addStartNode(invs[i],i,0);
             }
-            int outs=1<<R;
+            unsigned int outs=1<<R;
             nands.resize(outs);
+            outGates.resize(outs);
             for(unsigned int i=0;i<outs;i++){
                 nands[i]=new MinpNandGate<R>();
-                addEndNode(nands[i],i,0);
-                for(int j=0;j<R;j++){
-                    if((i&(1<<j))!=0){
+                outGates[i]=new Invertor();
+                connect(nands[i],outGates[i],0,0);
+                addEndNode(outGates[i],i,0);
+                for(unsigned int j=0;j<R;j++){
+                    if((i&(1<<j))==0){
                         connect(invs[j],nands[i],0,j);
                     }else{
                         //nands[i].setWire(inwires[j],j);
@@ -34,6 +37,6 @@ template<unsigned int N> class DecoderNode:public node{
         }
     };
     public:
-    DecoderNode<N>():node(N,1<<N,new Decoder<N>()){
+    Decoder<N>():node(N,1<<N,new DecoderNet<N>()){
     }
 };

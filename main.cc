@@ -3,18 +3,23 @@
 #include"mux.hh"
 #include<cstdio>
 int main(){
-//    DecoderNode<4> decode;
     
     OutWire arr[4],arr2[16];
     Multiplexer<16,4> mux;
-   
-    
+    MinpNandGate<4> fin;  
+    Decoder<4> decode;
     for(int i=0;i<16;i++){
         mux.setWire(&arr2[i],i);
     }
     for(int i=0;i<4;i++){
         mux.setWire(&arr[i],i+16);
+        decode.setWire(&arr[i],i);
+        fin.setWire(&arr[i],i);
     }
+//    fin.test();
+    decode.test();
+
+    return 0;
 
     for(int i=0;i<16;i++){
         arr2[i].set(true);
@@ -27,11 +32,12 @@ int main(){
                     arr[k].set(false);
                 }
             }
-            mux.output();
-            std::cout<<i<<" "<<j<<" "<<std::boolalpha<<mux.getWire(0)->get()<<'\n';
+             //mux.output(); 
+            // std::cout<<i<<" "<<j<<" "<<std::boolalpha<<mux.getWire(0)->get()<<'\n'; 
         }
         arr2[i].set(false);
     }
+
     return 0;
 }
 

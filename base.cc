@@ -31,7 +31,8 @@ bool OutWire::get(){
 
 void Network::output(){
     for(int i=0;i<inwires.size();i++){
-        if(inwires[i]->isChanged()){
+        if(inwires[i]->isChanged())
+        {
             for(int j=0;j<intConns[i].size();j++){
                 sch.set(intConns[i][j]);
             }
@@ -74,13 +75,11 @@ void Network::connect(OutWire* w,int inid){
     }
 }
 void Network::runBFS(){
-    /* std::cout<<"Running BFS now"<<std::endl; */
     list<node*> bfsTree,nextList;
     nodeVectorIterator iter=outnodes.begin(),end=outnodes.end();
     nodeListIterator iter2;
-    int level=1;
+    int level=0;
     for(;iter!=end;iter++){
-        /* std::cout<<"placing node"<<std::endl; */
         nextList.push_back(*iter);
         (*iter)->setLevel(level);
     }
@@ -91,11 +90,12 @@ void Network::runBFS(){
             for(;iterm!=iend;iterm++){
                 if((*iterm)->getLevel()==0){
                     (*iterm)->setLevel(level);
-                    /* std::cout<<"placing node2"<<std::endl; */
                     bfsTree.push_back(*iterm);
                 }
             }
         }
+        if(bfsTree.empty())
+            break;
         level++;
         nextList.clear();
         for(iter2=bfsTree.begin();iter2!=bfsTree.end();iter2++){
@@ -104,7 +104,6 @@ void Network::runBFS(){
                 if((*iterm)->getLevel()==0){
                     (*iterm)->setLevel(level);
                     nextList.push_back(*iterm);
-                    /* std::cout<<"placing node3"<<std::endl; */
                 }
             }
         }
@@ -113,9 +112,9 @@ void Network::runBFS(){
         bfsTree.clear();
         level++;
     }
+    level--;
     for(map<node*,list<node*> >::iterator it = connections.begin(); it != connections.end(); ++it) {
         it->first->setLevel(level-it->first->getLevel());
-        /* cout<<it->first->getLevel()<<" "<<endl; */
         it->second.clear();
     }
     connections.clear();
@@ -138,10 +137,11 @@ void node::resize(int in,int out){
     }
 }
 node::node(int in, int out,Network*lb){
-
+    lastSched=-1;
     //    inWires.resize(in);
     //    outWires.resize(out);
     next.resize(out);
+    nodeid=-1;
     //    for (int i=0;i<out;i++){
     //        outWires[i]=new Wire;
     //    }
@@ -215,15 +215,27 @@ void node::setLevel(int level) {
 int node::getLevel() {
     return level;
 }
+void node::outputSolo(){
+    if(internalNetwork!=NULL)
+        internalNetwork->output();
+}
 
 void node::output(){
     if(internalNetwork!=NULL)
         internalNetwork->output();
     if(sch!=NULL){
         for(int i=0;i<(*outWires).size();i++){
-            if((*outWires)[i]->isChanged()){
+            if(getWire(i)->isChanged()){
                 for(int j=0;j<next[i].size();j++){
                     sch->set(next[i][j]);
+                }
+            }
+        }
+    }else{
+        for(int i=0;i<(*outWires).size();i++){
+            if(getWire(i)->isChanged()){
+                for(int j=0;j<next[i].size();j++){
+                    next[i][j]->output();
                 }
             }
         }

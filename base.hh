@@ -40,7 +40,7 @@ class InWire:public Wire{
    }
    bool isChanged(){
        if(wire!=NULL)
-           return wire->get();
+           return wire->isChanged();
        return false;
    }
    void setWire(Wire*w){wire=dynamic_cast<OutWire*>(w);}
@@ -57,12 +57,18 @@ template<class T>
 class scheduler{
     std::vector<std::list<T*> > nList;
     int curr;
+    long long int currSched;
     public:
     scheduler() {
         curr=0;
+        currSched=0;
     }
 
     void set(T*n){
+        if(n->getSchId()>=currSched){
+            return;
+        }
+        n->setSchId(currSched);
         if(n->getLevel()>=nList.size()){
             nList.resize(n->getLevel()+2);
         }
@@ -81,6 +87,7 @@ class scheduler{
                 nList[curr].pop_front();
             }
         }
+        currSched++;
     }
 };
 /*
@@ -172,7 +179,8 @@ class Network{
 };
 class node:public baseNode{
     std::vector<std::vector<node*> > next;
-    int level;
+    int level,nodeid;
+    long long int lastSched;
     vector<InWire*> *inWires;
     vector<OutWire*> *outWires;
     scheduler<node>* sch;
@@ -195,9 +203,22 @@ class node:public baseNode{
     bool isChanged() const ;
     bool isChanged(int i) const ;
     virtual void printName(){
+        std::cout<<nodeid<<std::endl;
     }
     void setSch(scheduler<node>* sch) ;
     void connect(node*nm,int id,int yid);
+    void setSchId(long long int id){
+        lastSched=id;
+    }
+    long long int getSchId(){
+        return lastSched;
+    }
+    void setNodeId(int id){
+        nodeid=id;
+    }
+    int getNodeId(){
+        return nodeid;
+    }
 
     OutWire* getWire(int id);
     void setWire(OutWire*w,int id);
@@ -206,6 +227,7 @@ class node:public baseNode{
     */
     int getLevel();
     virtual void output();
+    virtual void outputSolo();
     void test(){
         std::cout<<"Testing"<<'\n';
         for(int i=0;i<1<<(inWires->size());i++){

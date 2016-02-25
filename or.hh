@@ -15,6 +15,7 @@ class MinpNorGate:public FaultType,public node{
     void output();
     void printName(){
         std::cout<<"M inp nor Gate"<<std::endl;
+        node::printName();
     }
 
     bool output(bool *a);
@@ -30,6 +31,7 @@ class NorGate:public FaultType,public node{
     bool output(bool a, bool b);
     void printName(){
         std::cout<<"Nor Gate"<<std::endl;
+        node::printName();
     }
 
 };
@@ -51,6 +53,7 @@ class OrGate:public FaultType,public node{
     bool output(bool a,bool b);
     void printName(){
         std::cout<<"Or Gate"<<std::endl;
+        node::printName();
     }
 
 };
@@ -76,7 +79,8 @@ class OrGateBlock:public node{
         setVal(last,0);
     }
     void printName(){
-        std::cout<<"Or Gate Block"<<std::endl;
+        std::cout<<getLevel()<<"\tOr Gate Block"<<std::endl;
+        node::printName();
     }
 
 };   

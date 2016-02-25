@@ -17,24 +17,25 @@ template <unsigned int ina, unsigned int siga> class Multiplexer:public node{
             igs=new InvertorGate[sig];
             for(int i=0;i<sig;i++){
                 addStartNode(&igs[i],in+i,0);
+                igs[i].setNodeId(i);
             }
             ngs=new AndGateBlock[in];
             ob.init(in);
             for(int i=0;i<in;i++){
                 ngs[i].init(sig+1);
+                ngs[i].setNodeId(i);
                 addStartNode(&ngs[i],i,0);
                 int sv=1;
                 for(int j=0;j<sig;j++){
                     if((sv&i)==sv){
-                        addStartNode(&ngs[i],j+in,j);
+                        addStartNode(&ngs[i],j+in,j+1);
                     }else{
-                        connect(&igs[j],&ngs[i],0,j);
+                        connect(&igs[j],&ngs[i],0,j+1);
                     }
                     sv<<=1;
                 }
                 connect(&ngs[i],&ob,0,i);
             }
-
             addEndNode(&ob,0,0);
         }
     };
@@ -43,6 +44,7 @@ template <unsigned int ina, unsigned int siga> class Multiplexer:public node{
     }
     void printName(){
         std::cout<<"Multiplexer"<<std::endl;
+        node::printName();
     }
 };
 

@@ -9,10 +9,13 @@ class InvertorGate:public FaultType,public node{
     InvertorGate():node(1),pa(),na(){
     }
     void output(){
-        output(getInVal(0)); 
+        output(getInVal(0));
+        node::output();
     }
     void printName(){
-        std::cout<<"Invertor "<<std::endl;
+        cout<<getLevel()<<'\t';
+        std::cout<<"Invertor "<<'\t';
+        node::printName();
     }
 
     bool output(bool a){
@@ -21,7 +24,6 @@ class InvertorGate:public FaultType,public node{
             out=getOut();
         }
         setVal(out,0);
-        /* std::cout<<"Invertor out "<<std::boolalpha<<out<<'\n'; */
         return out;
     }
 };
@@ -37,6 +39,12 @@ class XORGate:public FaultType, public node{
         bool ab=pa.output(a,true)|na.output(a,false);
         return (pb.output(b,a)|nb.output(b,ab));
     }
+    void printName(){
+        cout<<getLevel()<<'\t';
+        std::cout<<"XOR Gate "<<std::endl;
+        node::printName();
+    }
+
 };
 class BufferGate:public node{
     public:
@@ -45,5 +53,11 @@ class BufferGate:public node{
         void output(){
             setVal(getInVal(0),0);
         }
+        void printName(){
+            cout<<getLevel()<<'\t';
+            std::cout<<"Buffer Gate "<<std::endl;
+            node::printName();
+        }
+
 };
 #endif

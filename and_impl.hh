@@ -7,6 +7,7 @@
 
 void NandGate::output() {
     output(getInVal(0), getInVal(1));
+    node::output();
 }
 
 bool NandGate::output(bool a, bool b) {
@@ -20,6 +21,7 @@ bool NandGate::output(bool a, bool b) {
 
 void TriNandGate::output() {
     output(getInVal(0),getInVal(1),getInVal(2));// getWire(1)->get(), getWire(2)->get());
+        node::output();
 }
 
 bool TriNandGate::output(bool a, bool b, bool c) {
@@ -38,6 +40,7 @@ void MinpNandGate<N>::output() {
         arr[i] = getInVal(i);
     }
     setVal(output(arr));
+        node::output();
 }
 
 template<unsigned int N>
@@ -58,8 +61,12 @@ bool MinpNandGate<N>::output(bool *a) {
     return out;
 }
 
+void AndGate::outputSolo() {
+     output(getInVal(0), getInVal(1));
+}
 void AndGate::output() {
      output(getInVal(0), getInVal(1));
+        node::output();
 }
 
 void AndGate::setWire(OutWire*w, int id) {

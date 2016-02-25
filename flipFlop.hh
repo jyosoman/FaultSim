@@ -1,64 +1,69 @@
 #include"and.hh"
-class SRFlipFlop:public FaultType{
+class SRFlipFlop:public FaultType,public node{
     NandGate clkS, clkR, outQ, outQc;
-    bool qprev,qcprev;
     public:
-    SRFlipFlop():clkS(),clkR(),outQ(),outQc(){
-        outQ.setWire(clkS.getWire(0),0);
-        outQ.setWire(outQc.getWire(0),1);
-        outQc.setWire(clkR.getWire(0),0);
-        outQc.setWire(outQ.getWire(0),1);
-        outQ.setLevel(1);
-        outQ.setLevel(1);
-
-        qprev=true;
-        qcprev=false;
+    SRFlipFlop():node(3,2,NULL),clkS(),clkR(),outQ(),outQc(){
+        getWire(1)->set(true);
+        getWire(0)->set(false);
     }
-    virtual void setWire(OutWire*w,int id);
     void tick(bool s, bool r, bool clk);
     void output();
-    bool outputQ();
-    bool outputQC();
 };
-class DFlipFlop:public FaultType{
+class DFlipFlop:public FaultType,public node{
     SRFlipFlop srf;
+    InvertorGate ig;
     public:
-    DFlipFlop():srf(){
+    DFlipFlop():node(2,2),srf(),ig(){
+        srf.setWire(ig.getWire(0),1);
     }
     void tick(bool d, bool clk){
-        srf.tick(d,!d,clk);
+        srf.tick(d,ig.output(d),clk);
+        setVal(srf.getWire(0)->get(),0);
+        setVal(srf.getWire(1)->get(),1);
     }
-    bool output(){
-        return srf.outputQ();
-    }
-    bool outputC(){
-        return srf.outputQC();
+    void output(){
+        tick(getInVal(0),getInVal(1));
+        node::output();
     }
 };
-class JKFlipFlop{
-    TriNandGate tj,tk;
-    NandGate outQ,outQc;
-    bool qprev,qcprev;
+class JKFlipFlop:public node{
+    class JKFlipFlopNet:public Network{
+        TriNandGate tj,tk;
+        NandGate outQ,outQc;
+        public:
+        JKFlipFlopNet():Network(3,2),tj(),tk(),outQ(),outQc(){
+            addStartNode(&tj,0,0);
+            addStartNode(&tj,2,1);
+            addStartNode(&tk,1,0);
+            addStartNode(&tk,2,1);
+            connect(&outQ,&tk,0,2);
+            connect(&outQc,&tj,0,2);
+            connect(&tj,&outQ,0,0);
+            connect(&tk,&outQc,0,0);
+            connect(&outQ,&outQc,0,1);
+            connect(&outQc,&outQ,0,1);
+            addEndNode(&outQ,0,0);
+            addEndNode(&outQc,0,0);
+        }
+        /* void tick(bool j, bool k, bool clk){ */
+        /*     bool jout, kout; */
+        /*     jout=tj.output(j,getWire(1)->get(),clk); */
+        /*     kout=tk.output(k,getWire(0)->get(),clk); */
+        /*     bool qout,qcout; */
+        /*     qout=outQ.output(getWire(1)->get(),jout); */
+        /*     qcout=outQc.output(getWire(0)->get(),kout); */
+        /*     setVal(qout,0); */
+        /*     setVal(qcout,1); */
+        /* } */
+        /* void output(){ */
+        /*     tick(getInVal(0),getInVal(1),getInVal(2)); */
+        /*     node::output(); */
+        /* } */
+    };
     public:
-    JKFlipFlop():tj(),tk(),outQ(),outQc(),qprev(true),qcprev(false){
-        outQ.setLevel(1);
-        outQc.setLevel(1);
-    }
-    void tick(bool j, bool k, bool clk){
-        bool jout, kout;
-        jout=tj.output(j,qcprev,clk);
-        kout=tk.output(k,qprev,clk);
-        bool qout,qcout;
-        qout=outQ.output(qcprev,jout);
-        qcout=outQc.output(qprev,kout);
-        qprev=qout;
-        qcprev=qcout;
-    }
-    bool output(){
-        return qprev;
-    }
-    bool outputC(){
-        return qcprev;
+    JKFlipFlop():node(3,2,new JKFlipFlopNet()){
+        setVal(false,0);
+        setVal(true,1);
     }
 };
 

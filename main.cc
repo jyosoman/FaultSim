@@ -1,9 +1,10 @@
 #include"base.hh"
 #include"decoder.hh"
 #include"mux.hh"
+#include"flipFlop.hh"
 #include<cstdio>
 int main(){
-    
+    DFlipFlop f;   TriNandGate tj;
     OutWire arr[4],arr2[16];
     Multiplexer<16,4> mux;
     MinpNandGate<4> fin;  
@@ -16,8 +17,13 @@ int main(){
         decode.setWire(&arr[i],i);
         fin.setWire(&arr[i],i);
     }
+    for(int i=0;i<2;i++){
+        f.setWire(&arr[i],i);
+//        tj.setWire(&arr[i],i);
+    }
+    f.test();
 //    fin.test();
-    decode.test();
+//    decode.test();
 
     return 0;
 

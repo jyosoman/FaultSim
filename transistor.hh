@@ -3,7 +3,10 @@
 
 #include <cstddef>
 #include"base.hh"
+#include<list>
 class FaultType{
+    protected:
+    static std::list<FaultType*> flist;
     public:
         bool faulty, fout;
         FaultType(bool fault, bool fout);

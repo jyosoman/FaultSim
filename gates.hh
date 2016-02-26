@@ -2,7 +2,7 @@
 #define __gates__hh
 #include"base.hh"
 #include"transistor.hh"
-class InvertorGate:public FaultType,public node{
+class InvertorGate:public node{
     PMOSTransistor pa;
     NMOSTransistor na;
     public:
@@ -20,14 +20,11 @@ class InvertorGate:public FaultType,public node{
 
     bool output(bool a){
         bool out=pa.output(a,true)|na.output(a,false);
-        if(faulty){
-            out=getOut();
-        }
         setVal(out,0);
         return out;
     }
 };
-class XORGate:public FaultType, public node{
+class XORGate:public  node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     XORGate():node(2,1,NULL){

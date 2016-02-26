@@ -9,6 +9,10 @@ class FaultType{
         FaultType(bool fault, bool fout);
         FaultType();
         bool getOut();
+        void setFaulty(bool a, bool b){
+            faulty=a;
+            fout=b;
+        }
 };
 class PMOSTransistor:public FaultType{
     public:

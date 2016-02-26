@@ -18,9 +18,6 @@ bool MinpNorGate::output(bool *a){
         out2=pt[i].output(a[i],out2);
     }
     out|=out2;
-    if(faulty){
-        out=getOut();
-    }
     setVal(out,0);
     return out;
 }
@@ -31,9 +28,6 @@ void NorGate::output(){
 
 bool NorGate::output(bool a, bool b){
     bool out=pb.output(b,pa.output(a,true))|na.output(a,false)|nb.output(b,false);
-    if(faulty){
-        out=getOut();
-    }
     setVal(out,0);
     return out;
 }

@@ -2,7 +2,7 @@
 #define __and__hh
 #include"transistor.hh"
 #include"gates.hh"
-class NandGate:public FaultType,public node{
+class NandGate:public node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     public:
@@ -17,7 +17,7 @@ class NandGate:public FaultType,public node{
 
 
 };
-class TriNandGate:public FaultType,public node{
+class TriNandGate:public node{
     PMOSTransistor pa,pb,pc;
     NMOSTransistor na,nb,nc;
     public:
@@ -32,7 +32,7 @@ class TriNandGate:public FaultType,public node{
     }
 
 };
-template<unsigned int N> class MinpNandGate:public FaultType,public node{
+template<unsigned int N> class MinpNandGate:public node{
     PMOSTransistor *pt;
     NMOSTransistor *nt;
     int nin;
@@ -49,7 +49,7 @@ template<unsigned int N> class MinpNandGate:public FaultType,public node{
         node::printName();
     }
 };
-class AndGate:public FaultType,public node{
+class AndGate:public node{
     NandGate ng;
     InvertorGate ig;
     public:

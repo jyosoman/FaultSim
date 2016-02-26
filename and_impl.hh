@@ -12,9 +12,6 @@ void NandGate::output() {
 
 bool NandGate::output(bool a, bool b) {
     bool out = pa.output(a, true) | pb.output(b, true) | na.output(a, nb.output(b, false));
-    if (faulty) {
-        out = getOut();
-    }
     setVal(out,0);
     return out;
 }
@@ -26,9 +23,6 @@ void TriNandGate::output() {
 
 bool TriNandGate::output(bool a, bool b, bool c) {
     bool out = pa.output(a, true) | pb.output(b, true) | pc.output(c, true) | na.output(a, nb.output(b, nc.output(c, false)));
-    if (faulty) {
-        out = getOut();
-    }
     setVal(out, 0);
     return out;
 }
@@ -56,9 +50,6 @@ bool MinpNandGate<N>::output(bool *a) {
         out2 = nt[i].output(a[i], out2);
     }
     out |= out2;
-    if (faulty) {
-        out = getOut();
-    }
     setVal(out);
     return out;
 }

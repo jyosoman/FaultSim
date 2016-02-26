@@ -1,5 +1,5 @@
 #include"and.hh"
-class SRFlipFlop:public FaultType,public node{
+class SRFlipFlop:public node{
     NandGate clkS, clkR, outQ, outQc;
     public:
     SRFlipFlop():node(3,2,NULL),clkS(),clkR(),outQ(),outQc(){
@@ -9,7 +9,7 @@ class SRFlipFlop:public FaultType,public node{
     void tick(bool s, bool r, bool clk);
     void output();
 };
-class DFlipFlop:public FaultType,public node{
+class DFlipFlop:public node{
     SRFlipFlop srf;
     InvertorGate ig;
     public:
@@ -20,6 +20,7 @@ class DFlipFlop:public FaultType,public node{
         srf.tick(d,ig.output(d),clk);
         setVal(srf.getWire(0)->get(),0);
         setVal(srf.getWire(1)->get(),1);
+        cout<<boolalpha<<d<<" "<<clk<<" "<<srf.getWire(0)->get()<<" "<<srf.getWire(1)->get()<<endl;
     }
     void output(){
         tick(getInVal(0),getInVal(1));

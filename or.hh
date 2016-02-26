@@ -2,7 +2,7 @@
 #define __or__hh__
 #include"transistor.hh"
 #include"gates.hh"
-class MinpNorGate:public FaultType,public node{
+class MinpNorGate:public  node{
     PMOSTransistor *pt;
     NMOSTransistor *nt;
     int nin;
@@ -20,7 +20,7 @@ class MinpNorGate:public FaultType,public node{
 
     bool output(bool *a);
 };
-class NorGate:public FaultType,public node{
+class NorGate:public  node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
     public:
@@ -36,7 +36,7 @@ class NorGate:public FaultType,public node{
 
 };
 
-class OrGate:public FaultType,public node{
+class OrGate:public  node{
     NorGate ng;
     InvertorGate ig;
     public:

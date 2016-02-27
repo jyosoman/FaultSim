@@ -33,7 +33,7 @@ template<unsigned int N> class Decoder:public node{
                         addStartNode(nands[i],j,j);
                     }
                 }
-            }        
+            }
         }
     };
     public:

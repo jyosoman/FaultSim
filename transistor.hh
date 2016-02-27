@@ -6,8 +6,8 @@
 #include<list>
 class FaultType{
     protected:
-    static std::list<FaultType*> flist;
     public:
+        static std::list<FaultType*> flist;
         bool faulty, fout;
         FaultType(bool fault, bool fout);
         FaultType();

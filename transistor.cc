@@ -3,7 +3,7 @@ FaultType::FaultType(bool fault, bool fout){
     this->faulty=fault;
     this->fout=fout;
 }
-std::list<FaultType*> FaultType::flist;
+std::list<FaultType*> FaultType::flist(0);
 FaultType::FaultType(){
     faulty=false;
 }

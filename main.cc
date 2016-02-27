@@ -14,18 +14,21 @@ int main(){
     }
     for(int i=0;i<4;i++){
         mux.setWire(&arr[i],i+16);
-        decode.setWire(&arr[i],i);
+        decode.setWire(&arr2[i],i);
         fin.setWire(&arr[i],i);
     }
     for(int i=0;i<2;i++){
         f.setWire(&arr[i],i);
-//        tj.setWire(&arr[i],i);
+        tj.setWire(&arr[i],i);
+    }
+    for(int i=0;i<16;i++){
+//        decode.setWire(&arr[i],i+4);
     }
     f.test();
-//    fin.test();
-//    decode.test();
-
+    fin.test();
+    decode.test();
     return 0;
+
 
     for(int i=0;i<16;i++){
         arr2[i].set(true);

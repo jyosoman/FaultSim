@@ -123,45 +123,48 @@ void node::resize(int in,int out){
     next.resize(out);
     if(internalNetwork!=NULL){
     }else{
-        inWires=new vector<InWire*>();
-//        inWires->resize(in);
-        for(int i=0;i<in;i++){
+        if(inWires==NULL){
+            inWires=new vector<InWire*>();
+        }
+        inWires->reserve(in);
+        for(int i=inWires->size();i<in;i++){
             inWires->push_back(new InWire());
         }
-        outWires=new vector<OutWire*>();
-//        outWires->resize(out);
-        for(int i=0;i<out;i++){
+        if(outWires==NULL)
+            outWires=new vector<OutWire*>();
+
+        outWires->reserve(out);
+        for(int i=outWires->size();i<out;i++){
             outWires->push_back(new OutWire());
         }
     }
     output();
 }
 node::node(int in, int out,Network*lb){
+    level=0;
     lastSched=-1;
-    //    inWires.resize(in);
-    //    outWires.resize(out);
     next.resize(out);
     nodeid=-1;
-    //    for (int i=0;i<out;i++){
-    //        outWires[i]=new Wire;
-    //    }
     internalNetwork=lb;
+    inWires=NULL;
+    outWires=NULL;
+    sch=NULL;
     if(lb!=NULL){
+        sch=&(lb->sch);
         inWires=&lb->inwires;
         outWires=&lb->outWires;
         lb->runBFS();
     }else{
         inWires=new vector<InWire*>();
-        inWires->resize(in);
+        inWires->reserve(in);
         for(int i=0;i<in;i++){
-            (*inWires)[i]=new InWire();
+            inWires->push_back(new InWire());
         }
         outWires=new vector<OutWire*>();
-        outWires->resize(out);
-        for(int i=0;i<in;i++){
-            (*outWires)[i]=new OutWire();
+        outWires->reserve(out);
+        for(int i=0;i<out;i++){
+            outWires->push_back(new OutWire());
         }
-
     }
     output();
 }

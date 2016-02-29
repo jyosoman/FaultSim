@@ -21,13 +21,10 @@ int main(){
         f.setWire(&arr[i],i);
         tj.setWire(&arr[i],i);
     }
-    for(int i=0;i<16;i++){
-//        decode.setWire(&arr[i],i+4);
-    }
+
     f.test();
     fin.test();
     decode.test();
-    return 0;
 
 
     for(int i=0;i<16;i++){
@@ -41,12 +38,13 @@ int main(){
                     arr[k].set(false);
                 }
             }
-             //mux.output(); 
-            // std::cout<<i<<" "<<j<<" "<<std::boolalpha<<mux.getWire(0)->get()<<'\n'; 
+             mux.output(); 
+             std::cout<<i<<" "<<j<<" "<<std::boolalpha<<mux.getWire(0)->get()<<'\n'; 
         }
         arr2[i].set(false);
     }
 
+    return 0;
     return 0;
 }
 

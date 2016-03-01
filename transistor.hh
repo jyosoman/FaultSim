@@ -8,11 +8,12 @@ class FaultType{
     protected:
     public:
         static std::list<FaultType*> flist;
+        typedef std::list<FaultType*>::iterator FLiterator;
         bool faulty, fout;
         FaultType(bool fault, bool fout);
         FaultType();
         bool getOut();
-        void setFaulty(bool a, bool b){
+        virtual void setFaulty(bool a=true, bool b=true){
             faulty=a;
             fout=b;
         }
@@ -22,12 +23,18 @@ class PMOSTransistor:public FaultType{
         PMOSTransistor(bool fault);
         PMOSTransistor();
         bool output(bool in,bool top);
+        void setFaulty(){
+            FaultType::setFaulty(true,true);
+        }
 };
 class NMOSTransistor:public FaultType{
     public:
         NMOSTransistor(bool fault);
         NMOSTransistor();
         bool output(bool in,bool bottom);
+        void setFaulty(){
+            FaultType::setFaulty(true,false);
+        }
 
 };
 

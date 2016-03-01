@@ -21,12 +21,16 @@ int main(){
         f.setWire(&arr[i],i);
         tj.setWire(&arr[i],i);
     }
-
+    cout<<FaultType::flist.size()<<endl;
+    FaultType::FLiterator fliter=FaultType::flist.begin();
+    for(;fliter!=FaultType::flist.end();++fliter){
+        (*fliter)->setFaulty();
+    }
     f.test();
     fin.test();
     decode.test();
 
-
+    return 0;
     for(int i=0;i<16;i++){
         arr2[i].set(true);
         for(int j=0;j<16;j++){

@@ -21,11 +21,13 @@ int main(){
         f.setWire(&arr[i],i);
         tj.setWire(&arr[i],i);
     }
+    f.test();
     cout<<FaultType::flist.size()<<endl;
     FaultType::FLiterator fliter=FaultType::flist.begin();
     for(;fliter!=FaultType::flist.end();++fliter){
         (*fliter)->setFaulty();
     }
+    return 0;
     f.test();
     fin.test();
     decode.test();

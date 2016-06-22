@@ -1,7 +1,7 @@
 #ifndef __gates__hh
 #define __gates__hh
-#include"base.hh"
-#include"transistor.hh"
+#include"../base/base.hh"
+#include"../base/transistor.hh"
 class InvertorGate:public node{
     PMOSTransistor pa;
     NMOSTransistor na;

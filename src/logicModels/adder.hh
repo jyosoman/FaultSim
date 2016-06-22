@@ -1,4 +1,4 @@
-#include"and_impl.hh"
+#include"../gates/and_impl.hh"
 using namespace std;
 
 class FullAdder:public node{

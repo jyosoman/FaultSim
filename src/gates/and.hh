@@ -1,6 +1,6 @@
 #ifndef __and__hh
 #define __and__hh
-#include"transistor.hh"
+#include"../base/transistor.hh"
 #include"gates.hh"
 class NandGate:public node{
     PMOSTransistor pa,pb;

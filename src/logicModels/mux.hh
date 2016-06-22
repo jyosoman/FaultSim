@@ -1,6 +1,6 @@
-#include"gates.hh"
-#include"and.hh"
-#include"or.hh"
+#include"../gates/gates.hh"
+#include"../gates/and.hh"
+#include"../gates/or.hh"
 /***
  *
  * Wiring: First comes the data inputs, next comes the signal inputs

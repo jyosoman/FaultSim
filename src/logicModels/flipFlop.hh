@@ -1,4 +1,4 @@
-#include"and.hh"
+#include"../gates/and.hh"
 class SRFlipFlop:public node{
     NandGate clkS, clkR, outQ, outQc;
     public:

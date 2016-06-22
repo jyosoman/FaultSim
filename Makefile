@@ -1,17 +1,36 @@
-CC=g++
-CFLAGS=-c -Wall -g
-LDFLAGS=
-SOURCES=and.cc base.cc main.cc transistor.cc or.cc flipFlop.cc
-OBJECTS=$(SOURCES:.cc=.o)
+CC        := g++
+LD        := g++
+
+MODULES   := base gates logicModels test
+SRC_DIR   := $(addprefix src/,$(MODULES))
+BUILD_DIR := $(addprefix build/,$(MODULES))
+
 EXECUTABLE=memManaged
+SRC       := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.cc))
+OBJ       := $(patsubst src/%.cc,build/%.o,$(SRC))
+INCLUDES  := $(addprefix -I,$(SRC_DIR))
 
-all: $(SOURCES) $(EXECUTABLE) 
+vpath %.cc $(SRC_DIR)
 
-	    
-$(EXECUTABLE): $(OBJECTS) 
-	    $(CC) $(LDFLAGS) $(OBJECTS) -o $@
+define make-goal
+$1/%.o: %.cc
+	$(CC) $(INCLUDES) -c $$< -o $$@
+endef
 
-.cpp.o:
-	    $(CC) $(CFLAGS) $< -o $@
+.PHONY: all checkdirs clean
+
+all: checkdirs $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJ)
+	$(LD) $^ -o $@
+
+
+checkdirs: $(BUILD_DIR)
+
+$(BUILD_DIR):
+	@mkdir -p $@
+
 clean:
-	rm $(OBJECTS) $(EXECUTABLE)
+	@rm -rf $(BUILD_DIR)
+
+$(foreach bdir,$(BUILD_DIR),$(eval $(call make-goal,$(bdir))))

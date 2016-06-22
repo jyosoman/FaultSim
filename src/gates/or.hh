@@ -1,6 +1,6 @@
 #ifndef __or__hh__
 #define __or__hh__
-#include"transistor.hh"
+#include"../base/transistor.hh"
 #include"gates.hh"
 class MinpNorGate:public  node{
     PMOSTransistor *pt;

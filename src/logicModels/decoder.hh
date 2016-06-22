@@ -1,6 +1,6 @@
-#include"and_impl.hh"
-#include"gates.hh"
-#include"base.hh"
+#include"../gates/and_impl.hh"
+#include"../gates/gates.hh"
+#include"../base/base.hh"
 #include<vector>
 using namespace std;
 

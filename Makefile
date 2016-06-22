@@ -1,11 +1,12 @@
 CC        := g++
 LD        := g++
 
+CFLAGS	  := -Wall -O3
 MODULES   := base gates logicModels test
 SRC_DIR   := $(addprefix src/,$(MODULES))
 BUILD_DIR := $(addprefix build/,$(MODULES))
 
-EXECUTABLE=memManaged
+EXECUTABLE=build/test/memManaged
 SRC       := $(foreach sdir,$(SRC_DIR),$(wildcard $(sdir)/*.cc))
 OBJ       := $(patsubst src/%.cc,build/%.o,$(SRC))
 INCLUDES  := $(addprefix -I,$(SRC_DIR))
@@ -14,7 +15,7 @@ vpath %.cc $(SRC_DIR)
 
 define make-goal
 $1/%.o: %.cc
-	$(CC) $(INCLUDES) -c $$< -o $$@
+	$(CC) $(INCLUDES) $(CFLAGS) -c $$< -o $$@
 endef
 
 .PHONY: all checkdirs clean
@@ -22,7 +23,7 @@ endef
 all: checkdirs $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ)
-	$(LD) $^ -o $@
+	$(LD) $^ $(CFLAGS) -o $@
 
 
 checkdirs: $(BUILD_DIR)

@@ -10,6 +10,7 @@ void SRFlipFlop::tick(bool s, bool r, bool clk){
     setVal(qout,0);
     setVal(qcout,1);
 }
+
 void SRFlipFlop::output(){
     tick(getInVal(0),getInVal(1),getInVal(2));
     node::output();

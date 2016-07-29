@@ -179,6 +179,7 @@ class Network{
     void connect(OutWire* w,int inid);
     void runBFS();
 };
+
 class node:public baseNode{
     std::vector<std::vector<node*> > next;
     unsigned int level;

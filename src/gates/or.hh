@@ -82,6 +82,5 @@ class OrGateBlock:public node{
         std::cout<<getLevel()<<"\tOr Gate Block"<<std::endl;
         node::printName();
     }
-
 };   
 #endif

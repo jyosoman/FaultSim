@@ -21,12 +21,12 @@ class Gate(object):
 
     def printpretty(self, depth):
         print (' ' * depth) + str(self)
-        
+
     def __str__(self):
         return "<%s of %s>" % (self.name, type(self).__name__)
     def __repr__(self):
         return str(self)
-        
+
     def add_to_graph(self, graphObj):
         graphObj.add_node(self.name)
 
@@ -36,22 +36,22 @@ class Gate(object):
     @property
     def local_name(self):
         return self.name.split(".")[-1]
-    
+
     def get_all_transistors(self):
         return self.transistors
-        
+
     def get_gate_connections_by_inout_name(self, inout_name):
         return [self]
-                
+
     def get_gate_gate_connections(self):
         return []
-    
+
     def get_all_wires(self):
         assert(0)
-        
+
     def populate_wire(self, wire, connection_name):
         wire.add_gate_connection(self, connection_name)
-    
+
     def generateAllInputDictsToBlock(self):
         inputNames = sorted(self.inputs)
         inputValues = [ [True,False] for _ in inputNames]
@@ -59,16 +59,16 @@ class Gate(object):
         for vals in itertools.product(*inputValues):
             res.append( dict(zip(inputNames,vals)))
         return res
-    
+
     def get_gate_logical_effort(self):
-        return self.logical_effort 
+        return self.logical_effort
 
 # Basic Gate templates:
 class Inv(Gate):
     inputs = ['vin']
     outputs = ['vout']
     class_transistors = [
-                   ('mn', NMOS ), 
+                   ('mn', NMOS ),
                    ('mp', PMOS ),
                    ]
     logical_effort = 1.
@@ -76,7 +76,7 @@ class Inv(Gate):
         return {'vout': np.logical_not(inputs['vin']) }
     def get_transistor_input_signal(self, transistor_name, inputDct):
         if   transistor_name in ['mn', 'mp']: return inputDct['vin']
-    
+
 class Xor2(Gate):
     inputs = ['vin1', 'vin2']
     outputs = ['vout']
@@ -95,21 +95,21 @@ class Xor2(Gate):
     logical_effort = 4.
     def simulate(self, inputs, save_intermediate_signals=None):
         return {'vout': np.logical_xor(inputs['vin1'], inputs['vin2'])}
-    
+
     def get_transistor_input_signal(self, transistor_name, inputDct):
         if   transistor_name in ['mn7', 'mp7', 'mn10', 'mp10']: return inputDct['vin1']
         elif transistor_name in ['mn8', 'mp8', 'mn11', 'mp11']: return inputDct['vin2']
         elif transistor_name in ['mn9', 'mp9']: return np.logical_not(np.logical_or(inputDct['vin1'], inputDct['vin2']))
         else:
             assert(0)
-        
+
 class Nand2(Gate):
     inputs = ['vin1', 'vin2']
     outputs = ['vout']
     class_transistors = [
-               ('mn3', NMOS ), 
+               ('mn3', NMOS ),
                ('mp3', PMOS ),
-               ('mn4', NMOS ), 
+               ('mn4', NMOS ),
                ('mp4', PMOS )
                ]
     logical_effort = 4./3.
@@ -118,16 +118,16 @@ class Nand2(Gate):
     def get_transistor_input_signal(self, transistor_name, inputDct):
         if   transistor_name in ['mn3', 'mp3']: return inputDct['vin1']
         elif transistor_name in ['mn4', 'mp4']: return inputDct['vin2']
-        else: 
+        else:
             assert(0)
 
 class Nor2(Gate):
     inputs = ['vin1', 'vin2']
     outputs = ['vout']
     class_transistors = [
-           ('mn5', NMOS ), 
+           ('mn5', NMOS ),
            ('mp5', PMOS ),
-           ('mn6', NMOS ), 
+           ('mn6', NMOS ),
            ('mp6', PMOS )
            ]
     logical_effort = 5./3.
@@ -136,7 +136,7 @@ class Nor2(Gate):
     def get_transistor_input_signal(self, transistor_name, inputDct):
         if   transistor_name in ['mn5', 'mp5']: return inputDct['vin1']
         elif transistor_name in ['mn6', 'mp6']: return inputDct['vin2']
-        else: 
+        else:
             assert(0)
 
 
@@ -152,28 +152,28 @@ class CombinationalBlock(object):
         return "<%s of %s>" % (self.name, type(self).__name__)
     def __repr__(self):
         return str(self)
-    
+
     def printpretty(self, depth=0):
         print (' ' * depth) + str(self)
         for blk, _ in self.blks:
-            blk.printpretty(4 + depth)     
+            blk.printpretty(4 + depth)
 
     @property
     def local_name(self):
         return self.name.split(".")[-1]
-    
+
     def get_all_gates(self,):
         all_gates = []
         for blk, _ in self.blks:
             all_gates.extend(blk.get_all_gates())
         return all_gates
-    
+
     def get_all_transistors(self,):
         all_trans = []
         for blk, _ in self.blks:
             all_trans.extend(blk.get_all_transistors())
         return all_trans
-    
+
     def get_gate_connections_by_inout_name(self, inout_name):
         """
         """
@@ -191,12 +191,12 @@ class CombinationalBlock(object):
         for vals in itertools.product(*inputValues):
             res.append( dict(zip(inputNames,vals)))
         return res
-    
-    
+
+
     def get_gate_gate_connections(self):
         #returns a list of all the pairs of gates that are connected to each other inside a block
         all_connections = []
-        #loop over 
+        #loop over
         for blk, connections in self.blks:
             blk_connection = blk.get_gate_gate_connections()
             all_connections.extend(blk_connection)
@@ -216,22 +216,22 @@ class CombinationalBlock(object):
             for suc_node in successor_gates:
                 all_connections.append((predecessor_gates[0], suc_node))
         return all_connections
-    
+
     def simulate_all(self, inputs):
         intermeds = {}
-        self.simulate(inputs, intermeds)     
+        self.simulate(inputs, intermeds)
         return intermeds
-                
+
     def simulate(self, inputs, save_intermediate_signals=None):
         """
         Simulates an object. The input should be a dictionary, mapping for example
-        
+
             inputs = { 'vin_cin': [False,True, False], 'vin_a0':[True,True,False], ... }
-        
-        The return value will be another dictionary 
-        
+
+        The return value will be another dictionary
+
             inputs = { 'vout_cout': [False,True, False], 's0':[True,True,False],  's1':[True,True,False], }.
-            
+
         The optional parameter, save_intermediate_signals, is a dictionary, which will be populated with all the
         intermediate values of all the nodes, with full gate-names, e.g.:
             {
@@ -240,46 +240,46 @@ class CombinationalBlock(object):
                 'add2bit.pg1.xor.vout': array([ True, False, False, False, False,  True, False, False, False,])
                 'add2bit.gray1.grayMid', array([ True, False, False, False, False,  True, False, False, False]),
             }
-       
+
         """
-        
+
         nodeValues = inputs.copy()
-        
+
         for (blk, connections) in self.blks:
             #print blk, connections
             blkInputDict = dict( [ (k, nodeValues[v]) for (k,v) in connections.items() if k in blk.inputs] )
-            
+
             blkOutputDict = blk.simulate(blkInputDict, save_intermediate_signals=save_intermediate_signals)
-            
-            
+
+
             # Copy new values into nodeValues:
             for rName, rValue in blkOutputDict.items():
                 localName = connections[rName]
                 nodeValues[localName] = rValue
-            
-            # Save the intermediate variables    
+
+            # Save the intermediate variables
             if save_intermediate_signals is not None:
                 for (k,v) in blkInputDict.items():
                     save_intermediate_signals[blk.name + "." + k] = v
                 for (k,v) in blkOutputDict.items():
                     save_intermediate_signals[blk.name + "." + k] = v
-            
-        
-        
+
+
+
         # Save the intermediate signals?
         if save_intermediate_signals is not None:
             for (k,v) in nodeValues.items():
                 save_intermediate_signals[self.name + "." + k] = v
-                
-        
+
+
         # Return the output-values:
         results = {}
         for opName in self.outputs:
             results[opName] = nodeValues[opName]
         return results
-    
+
     def add_to_graph(self, graphObj):
-        
+
         # Add all the child nodes:
         for blk, connections in self.blks:
             blk.add_to_graph(graphObj)
@@ -293,13 +293,13 @@ class CombinationalBlock(object):
             if isinstance(blk, Gate):
                 for gateConnection, localConnectionName in connections.items():
                     localPortName = "_" + self.name+ "." + localConnectionName
-                    
+
                     if gateConnection in blk.inputs:
                         graphObj.add_edge(localPortName, blk.name )
                     else:
                         assert gateConnection in blk.outputs
                         graphObj.add_edge(blk.name, localPortName )
-                        
+
             elif isinstance(blk, CombinationalBlock):
                 for blkConnection, localConnectionName in connections.items():
                     localPortName = "_" + self.name+ "." + localConnectionName
@@ -319,7 +319,7 @@ class CombinationalBlock(object):
             wires[localNodeName] = NetworkWire()
             wires[localNodeName].add_block_connection(self, localNodeName)
         return WireSet(wires.values())
-        
+
     def all_paths(self):
         ageing_graph = nx.DiGraph()
         for gate in self.get_all_gates():
@@ -327,14 +327,14 @@ class CombinationalBlock(object):
         for gate0, gate1 in self.get_gate_gate_connections():
             print gate0, gate1
             ageing_graph.add_edge(gate0, gate1)
-            
+
         graph_source_nodes = []
         graph_dest_nodes = []
         for inputName in self.inputs:
             graph_source_nodes.extend( self.get_gate_connections_by_inout_name(inputName) )
         for outputName in self.outputs:
             graph_dest_nodes.extend( self.get_gate_connections_by_inout_name(outputName) )
-            
+
         graph_source_nodes = list(set(graph_source_nodes))
         #print "graph_source_nodes: ", graph_source_nodes
         graph_dest_nodes = list(set(graph_dest_nodes))
@@ -350,12 +350,12 @@ class CombinationalBlock(object):
                     paths = [[source]]
                 else:
                     paths = list(all_simple_paths(ageing_graph, source, dest))
-                
+
                 if paths:
                     #print("Between: %s and %s" % (source, dest) )
                     for path in paths:
                         yield path, (source, dest)
-    
+
 
 # 'Derived' gate templates:
 class Or2(CombinationalBlock):
@@ -365,8 +365,8 @@ class Or2(CombinationalBlock):
     class_blocks = [
         ('nor', Nor2, {'vin1': 'vin1', 'vin2': 'vin2', 'vout': 'mid'}),
         ('inv', Inv,  {'vin': 'mid', 'vout': 'vout'}),
-        ]       
-    
+        ]
+
 class And2(CombinationalBlock):
     inputs = ['vin1', 'vin2']
     outputs = ['vout']
@@ -406,7 +406,7 @@ class dec2to4_EN(CombinationalBlock):
                 ('and3_2', And2, {'vin1': 'Y2', 'vin2': 'EN', 'vout': 'vout3'}),
                 ('and4_2', And2, {'vin1': 'Y3', 'vin2': 'EN', 'vout': 'vout4'}),
                 ]
-    
+
 
 class dec3to8(CombinationalBlock):
     inputs = ['vin1', 'vin2', 'vin3']
@@ -414,11 +414,11 @@ class dec3to8(CombinationalBlock):
     internal_nodes = ['vin3_bar', ]
     class_blocks = [
                 ('inv', Inv,            {'vin': 'vin3', 'vout': 'vin3_bar'}),
-                ('dec24_1', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'vin3_bar', 
-                                         'vout1': 'vout1', 'vout2': 'vout2', 
+                ('dec24_1', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'vin3_bar',
+                                         'vout1': 'vout1', 'vout2': 'vout2',
                                          'vout3': 'vout3', 'vout4': 'vout4'}),
-                ('dec24_2', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'vin3', 
-                                         'vout1': 'vout5', 'vout2': 'vout6', 
+                ('dec24_2', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'vin3',
+                                         'vout1': 'vout5', 'vout2': 'vout6',
                                          'vout3': 'vout7', 'vout4': 'vout8'}),
                 ]
 
@@ -430,18 +430,18 @@ class dec4to16(CombinationalBlock):
                ]
     internal_nodes = ['EN1', 'EN2', 'EN3', 'EN4']
     class_blocks = [
-                ('dec24_EN', dec2to4,   {'vin1': 'vin3', 'vin2': 'vin4', 'vout1': 'EN1', 
+                ('dec24_EN', dec2to4,   {'vin1': 'vin3', 'vin2': 'vin4', 'vout1': 'EN1',
                                          'vout2': 'EN2', 'vout3': 'EN3', 'vout4': 'EN4'}),
-                ('dec24_1', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN1', 
+                ('dec24_1', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN1',
                                          'vout1': 'vout1', 'vout2': 'vout2', 'vout3': 'vout3', 'vout4': 'vout4'}),
-                ('dec24_2', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN2', 
+                ('dec24_2', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN2',
                                          'vout1': 'vout5', 'vout2': 'vout6', 'vout3': 'vout7', 'vout4': 'vout8'}),
-                ('dec24_3', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN3', 
+                ('dec24_3', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN3',
                                          'vout1': 'vout9', 'vout2': 'vout10', 'vout3': 'vout11', 'vout4': 'vout12'}),
-                ('dec24_4', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN4', 
+                ('dec24_4', dec2to4_EN, {'vin1': 'vin1', 'vin2': 'vin2', 'EN': 'EN4',
                                          'vout1': 'vout13', 'vout2': 'vout14', 'vout3': 'vout15', 'vout4': 'vout16'}),
                 ]
-    
+
 class dec7to128(CombinationalBlock):
     inputs = ['vin1', 'vin2', 'vin3', 'vin4', 'vin5', 'vin6', 'vin7']
     outputs = [
@@ -467,13 +467,13 @@ class dec7to128(CombinationalBlock):
                       'Y12', 'Y13', 'Y14', 'Y15', 'Y16', 'Y17', 'Y18', 'Y19', 'Y20', 'Y21', 'Y22', 'Y23',
                       ]
     class_blocks = [
-                ('dec3_8', dec3to8,   {'vin1': 'vin1', 'vin2': 'vin2', 'vin3': 'vin3', 
-                                       'vout1': 'Y0', 'vout2': 'Y1', 'vout3': 'Y2', 'vout4': 'Y3', 
+                ('dec3_8', dec3to8,   {'vin1': 'vin1', 'vin2': 'vin2', 'vin3': 'vin3',
+                                       'vout1': 'Y0', 'vout2': 'Y1', 'vout3': 'Y2', 'vout4': 'Y3',
                                        'vout5': 'Y4', 'vout6': 'Y5', 'vout7': 'Y6', 'vout8': 'Y7'}),
-                ('dec4_16', dec4to16, {'vin1': 'vin4', 'vin2': 'vin5', 'vin3': 'vin6', 'vin4': 'vin7', 
-                                       'vout1': 'Y8', 'vout2': 'Y9', 'vout3': 'Y10', 'vout4': 'Y11', 
-                                       'vout5': 'Y12', 'vout6': 'Y13', 'vout7': 'Y14', 'vout8': 'Y15', 
-                                       'vout9': 'Y16', 'vout10': 'Y17', 'vout11': 'Y18', 'vout12': 'Y19', 
+                ('dec4_16', dec4to16, {'vin1': 'vin4', 'vin2': 'vin5', 'vin3': 'vin6', 'vin4': 'vin7',
+                                       'vout1': 'Y8', 'vout2': 'Y9', 'vout3': 'Y10', 'vout4': 'Y11',
+                                       'vout5': 'Y12', 'vout6': 'Y13', 'vout7': 'Y14', 'vout8': 'Y15',
+                                       'vout9': 'Y16', 'vout10': 'Y17', 'vout11': 'Y18', 'vout12': 'Y19',
                                        'vout13': 'Y20', 'vout14': 'Y21', 'vout15': 'Y22', 'vout16': 'Y23'}),
                 ('and_1', And2, {'vin1': 'Y0', 'vin2': 'Y8', 'vout': 'vout1'}),
                 ('and_2', And2, {'vin1': 'Y1', 'vin2': 'Y8', 'vout': 'vout2'}),
@@ -615,7 +615,7 @@ class BlackCell(CombinationalBlock):
         ('and2', And2, {'vin1': 'Pik', 'vin2': 'Pk_1j', 'vout': 'Pij'}),
         ('or', Or2,    {'vin1': 'Gik', 'vin2': 'blackMid', 'vout': 'Gij'}),
                        ]
-    
+
 class GrayCell(CombinationalBlock):
     inputs = ['Gik','Pik','Gk_1j']
     outputs = ['Gij']
@@ -647,49 +647,49 @@ class Adder2Bit(CombinationalBlock):
         ('sum0', Xor2, {'vin1': 'vin_cin', 'vin2': 'p0', 'vout': 's0'} ),
         ('sum1', Xor2, {'vin1': 'c0', 'vin2': 'p1', 'vout': 's1'} ),
         ]
-    
+
 class Adder32Bit_Kogge_Stone(CombinationalBlock):
     inputs = [
-              'vin_cin', 
-              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10', 
-              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20', 
+              'vin_cin',
+              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10',
+              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20',
               'vin_a21', 'vin_a22', 'vin_a23', 'vin_a24', 'vin_a25', 'vin_a26', 'vin_a27', 'vin_a28', 'vin_a29', 'vin_a30',
               'vin_a31',
-              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10', 
-              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20', 
+              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10',
+              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20',
               'vin_b21', 'vin_b22', 'vin_b23', 'vin_b24', 'vin_b25', 'vin_b26', 'vin_b27', 'vin_b28', 'vin_b29', 'vin_b30',
-              'vin_b31', 
+              'vin_b31',
               ]
     outputs = [
-               'vout_cout', 
+               'vout_cout',
                's0', 's1', 's2', 's3', 's4','s5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17',
-               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31', 
+               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31',
                ]
     internal_nodes = [
-                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16', 
-                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31', 
-                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16', 
-                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',  
-                      
-                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15', 
+                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16',
+                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31',
+                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16',
+                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',
+
+                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15',
                       'gg16', 'gg17', 'gg18', 'gg19', 'gg20', 'gg21', 'gg22', 'gg23', 'gg24', 'gg25', 'gg26', 'gg27', 'gg28', 'gg29', 'gg30',
-                      
-                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15', 
+
+                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15',
                       'bg16', 'bg17', 'bg18', 'bg19', 'bg20', 'bg21', 'bg22', 'bg23', 'bg24', 'bg25', 'bg26', 'bg27', 'bg28', 'bg29', 'bg30',
-                      'bg31', 'bg32', 'bg33', 'bg34', 'bg35', 'bg36', 'bg37', 'bg38', 'bg39', 'bg40', 'bg41','bg42','bg43','bg44', 'bg45', 
-                      'bg46', 'bg47', 'bg48', 'bg49', 'bg50', 'bg51', 'bg52', 'bg53', 'bg54', 'bg55', 'bg56', 'bg57', 'bg58', 'bg59', 'bg60', 
-                      'bg61', 'bg62', 'bg63', 'bg64', 'bg65', 'bg66', 'bg67', 'bg68', 'bg69', 'bg70', 'bg71', 'bg72', 'bg73', 'bg74', 'bg75', 
-                      'bg76', 'bg77', 'bg78', 'bg79', 'bg80', 'bg81', 'bg82', 'bg83', 'bg84', 'bg85', 'bg86', 'bg87', 'bg88', 'bg89', 'bg90',     
-                      'bg91', 'bg92', 'bg93', 'bg94', 'bg95', 'bg96', 'bg97', 
-                      
-                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15', 
+                      'bg31', 'bg32', 'bg33', 'bg34', 'bg35', 'bg36', 'bg37', 'bg38', 'bg39', 'bg40', 'bg41','bg42','bg43','bg44', 'bg45',
+                      'bg46', 'bg47', 'bg48', 'bg49', 'bg50', 'bg51', 'bg52', 'bg53', 'bg54', 'bg55', 'bg56', 'bg57', 'bg58', 'bg59', 'bg60',
+                      'bg61', 'bg62', 'bg63', 'bg64', 'bg65', 'bg66', 'bg67', 'bg68', 'bg69', 'bg70', 'bg71', 'bg72', 'bg73', 'bg74', 'bg75',
+                      'bg76', 'bg77', 'bg78', 'bg79', 'bg80', 'bg81', 'bg82', 'bg83', 'bg84', 'bg85', 'bg86', 'bg87', 'bg88', 'bg89', 'bg90',
+                      'bg91', 'bg92', 'bg93', 'bg94', 'bg95', 'bg96', 'bg97',
+
+                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15',
                       'bp16', 'bp17', 'bp18', 'bp19', 'bp20', 'bp21', 'bp22', 'bp23', 'bp24', 'bp25', 'bp26', 'bp27', 'bp28', 'bp29', 'bp30',
-                      'bp31', 'bp32', 'bp33', 'bp34', 'bp35', 'bp36', 'bp37', 'bp38', 'bp39', 'bp40', 'bp41','bp42','bp43','bp44', 'bp45', 
-                      'bp46', 'bp47', 'bp48', 'bp49', 'bp50', 'bp51', 'bp52', 'bp53', 'bp54', 'bp55', 'bp56', 'bp57', 'bp58', 'bp59', 'bp60', 
-                      'bp61', 'bp62', 'bp63', 'bp64', 'bp65', 'bp66', 'bp67', 'bp68', 'bp69', 'bp70', 'bp71', 'bp72', 'bp73', 'bp74', 'bp75', 
-                      'bp76', 'bp77', 'bp78', 'bp79', 'bp80', 'bp81', 'bp82', 'bp83', 'bp84', 'bp85', 'bp86', 'bp87', 'bp88', 'bp89', 'bp90',     
-                      'bp91', 'bp92', 'bp93', 'bp94', 'bp95', 'bp96', 'bp97', 
- 
+                      'bp31', 'bp32', 'bp33', 'bp34', 'bp35', 'bp36', 'bp37', 'bp38', 'bp39', 'bp40', 'bp41','bp42','bp43','bp44', 'bp45',
+                      'bp46', 'bp47', 'bp48', 'bp49', 'bp50', 'bp51', 'bp52', 'bp53', 'bp54', 'bp55', 'bp56', 'bp57', 'bp58', 'bp59', 'bp60',
+                      'bp61', 'bp62', 'bp63', 'bp64', 'bp65', 'bp66', 'bp67', 'bp68', 'bp69', 'bp70', 'bp71', 'bp72', 'bp73', 'bp74', 'bp75',
+                      'bp76', 'bp77', 'bp78', 'bp79', 'bp80', 'bp81', 'bp82', 'bp83', 'bp84', 'bp85', 'bp86', 'bp87', 'bp88', 'bp89', 'bp90',
+                      'bp91', 'bp92', 'bp93', 'bp94', 'bp95', 'bp96', 'bp97',
+
                       ]
     class_blocks = [
         ('pg0', PGCell, {'vin1':'vin_a0', 'vin2': 'vin_b0', 'P':'p0', 'G':'g0'} ),
@@ -858,7 +858,7 @@ class Adder32Bit_Kogge_Stone(CombinationalBlock):
         ('gray28', GrayCell, {'Gik':'bg95','Pik':'bp95','Gk_1j':'gg12', 'Gij': 'gg28'} ),
         ('gray29', GrayCell, {'Gik':'bg96','Pik':'bp96','Gk_1j':'gg13', 'Gij': 'gg29'} ),
         ('gray30', GrayCell, {'Gik':'bg97','Pik':'bp97','Gk_1j':'gg14', 'Gij': 'gg30'} ),
-        
+
         ('sum0', Xor2, {'vin1': 'vin_cin', 'vin2': 'p0', 'vout': 's0'} ),
         ('sum1', Xor2, {'vin1': 'gg0', 'vin2': 'p1', 'vout': 's1'} ),
         ('sum2', Xor2, {'vin1': 'gg1', 'vin2': 'p2', 'vout': 's2'} ),
@@ -891,43 +891,43 @@ class Adder32Bit_Kogge_Stone(CombinationalBlock):
         ('sum29', Xor2, {'vin1': 'gg28', 'vin2': 'p29', 'vout': 's29'} ),
         ('sum30', Xor2, {'vin1': 'gg29', 'vin2': 'p30', 'vout': 's30'} ),
         ('sum31', Xor2, {'vin1': 'gg30', 'vin2': 'p31', 'vout': 's31'} ),
-        
+
         ('gray31', GrayCell, {'Gik':'g31','Pik':'p31','Gk_1j':'gg30', 'Gij': 'vout_cout'} ),
-                
+
         ]
-    
+
 class Adder32Bit_Brent_Kung(CombinationalBlock):
     inputs = [
-              'vin_cin', 
-              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10', 
-              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20', 
+              'vin_cin',
+              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10',
+              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20',
               'vin_a21', 'vin_a22', 'vin_a23', 'vin_a24', 'vin_a25', 'vin_a26', 'vin_a27', 'vin_a28', 'vin_a29', 'vin_a30',
               'vin_a31',
-              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10', 
-              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20', 
+              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10',
+              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20',
               'vin_b21', 'vin_b22', 'vin_b23', 'vin_b24', 'vin_b25', 'vin_b26', 'vin_b27', 'vin_b28', 'vin_b29', 'vin_b30',
-              'vin_b31', 
+              'vin_b31',
               ]
     outputs = [
-               'vout_cout', 
+               'vout_cout',
                's0', 's1', 's2', 's3', 's4','s5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17',
-               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31', 
+               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31',
                ]
     internal_nodes = [
-                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16', 
-                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31', 
-                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16', 
-                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',                                             
-                      
-                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15', 
-                      'gg16', 'gg17', 'gg18', 'gg19', 'gg20', 'gg21', 'gg22', 'gg23', 'gg24', 'gg25', 'gg26', 'gg27', 'gg28', 'gg29', 'gg30', 
-                      
-                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15', 
-                      'bg16', 'bg17', 'bg18', 'bg19', 'bg20', 'bg21', 'bg22', 'bg23', 'bg24', 'bg25', 
-                      
-                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15', 
-                      'bp16', 'bp17', 'bp18', 'bp19', 'bp20', 'bp21', 'bp22', 'bp23', 'bp24', 'bp25', 
- 
+                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16',
+                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31',
+                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16',
+                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',
+
+                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15',
+                      'gg16', 'gg17', 'gg18', 'gg19', 'gg20', 'gg21', 'gg22', 'gg23', 'gg24', 'gg25', 'gg26', 'gg27', 'gg28', 'gg29', 'gg30',
+
+                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15',
+                      'bg16', 'bg17', 'bg18', 'bg19', 'bg20', 'bg21', 'bg22', 'bg23', 'bg24', 'bg25',
+
+                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15',
+                      'bp16', 'bp17', 'bp18', 'bp19', 'bp20', 'bp21', 'bp22', 'bp23', 'bp24', 'bp25',
+
                       ]
     class_blocks = [
         ('pg0', PGCell, {'vin1':'vin_a0', 'vin2': 'vin_b0', 'P':'p0', 'G':'g0'} ),
@@ -978,9 +978,9 @@ class Adder32Bit_Brent_Kung(CombinationalBlock):
         ('black11', BlackCell, {'Gik':'g24','Pik':'p24','Gk_1j':'g23', 'Pk_1j':'p23', 'Gij': 'bg11', 'Pij': 'bp11'} ),
         ('black12', BlackCell, {'Gik':'g26','Pik':'p26','Gk_1j':'g25', 'Pk_1j':'p25', 'Gij': 'bg12', 'Pij': 'bp12'} ),
         ('black13', BlackCell, {'Gik':'g28','Pik':'p28','Gk_1j':'g27', 'Pk_1j':'p27', 'Gij': 'bg13', 'Pij': 'bp13'} ),
-        ('black14', BlackCell, {'Gik':'g30','Pik':'p30','Gk_1j':'g29', 'Pk_1j':'p29', 'Gij': 'bg14', 'Pij': 'bp14'} ),        
+        ('black14', BlackCell, {'Gik':'g30','Pik':'p30','Gk_1j':'g29', 'Pk_1j':'p29', 'Gij': 'bg14', 'Pij': 'bp14'} ),
         #row 2
-        ('gray1', GrayCell, {'Gik':'bg0','Pik':'bp0','Gk_1j':'gg0', 'Gij': 'gg1'} ),        
+        ('gray1', GrayCell, {'Gik':'bg0','Pik':'bp0','Gk_1j':'gg0', 'Gij': 'gg1'} ),
         ('black15', BlackCell, {'Gik':'bg2','Pik':'bp2','Gk_1j':'bg1', 'Pk_1j':'bp1', 'Gij': 'bg15', 'Pij': 'bp15'} ),
         ('black16', BlackCell, {'Gik':'bg4','Pik':'bp4','Gk_1j':'bg3', 'Pk_1j':'bp3', 'Gij': 'bg16', 'Pij': 'bp16'} ),
         ('black17', BlackCell, {'Gik':'bg6','Pik':'bp6','Gk_1j':'bg5', 'Pk_1j':'bp5', 'Gij': 'bg17', 'Pij': 'bp17'} ),
@@ -993,7 +993,7 @@ class Adder32Bit_Brent_Kung(CombinationalBlock):
         ('black22', BlackCell, {'Gik':'bg17','Pik':'bp17','Gk_1j':'bg16', 'Pk_1j':'bp16', 'Gij': 'bg22', 'Pij': 'bp22'} ),
         ('black23', BlackCell, {'Gik':'bg19','Pik':'bp19','Gk_1j':'bg18', 'Pk_1j':'bp18', 'Gij': 'bg23', 'Pij': 'bp23'} ),
         ('black24', BlackCell, {'Gik':'bg21','Pik':'bp21','Gk_1j':'bg20', 'Pk_1j':'bp20', 'Gij': 'bg24', 'Pij': 'bp24'} ),
-        #row 4                
+        #row 4
         ('gray3', GrayCell, {'Gik':'bg22','Pik':'bp22','Gk_1j':'gg2', 'Gij': 'gg3'} ),
         ('black25', BlackCell, {'Gik':'bg24','Pik':'bp24','Gk_1j':'bg23', 'Pk_1j':'bp23', 'Gij': 'bg25', 'Pij': 'bp25'} ),
         #row 5
@@ -1027,7 +1027,7 @@ class Adder32Bit_Brent_Kung(CombinationalBlock):
         ('gray28', GrayCell, {'Gik':'g25','Pik':'p25','Gk_1j':'gg14', 'Gij': 'gg28'} ),
         ('gray29', GrayCell, {'Gik':'g27','Pik':'p27','Gk_1j':'gg8', 'Gij': 'gg29'} ),
         ('gray30', GrayCell, {'Gik':'g29','Pik':'p29','Gk_1j':'gg15', 'Gij': 'gg30'} ),
-        
+
         ('sum0', Xor2, {'vin1': 'vin_cin', 'vin2': 'p0', 'vout': 's0'} ),
         ('sum1', Xor2, {'vin1': 'gg0', 'vin2': 'p1', 'vout': 's1'} ),
         ('sum2', Xor2, {'vin1': 'gg16', 'vin2': 'p2', 'vout': 's2'} ),
@@ -1060,45 +1060,45 @@ class Adder32Bit_Brent_Kung(CombinationalBlock):
         ('sum29', Xor2, {'vin1': 'gg15', 'vin2': 'p29', 'vout': 's29'} ),
         ('sum30', Xor2, {'vin1': 'gg30', 'vin2': 'p30', 'vout': 's30'} ),
         ('sum31', Xor2, {'vin1': 'gg4', 'vin2': 'p31', 'vout': 's31'} ),
-        
+
         ('gray31', GrayCell, {'Gik':'g31','Pik':'p31','Gk_1j':'gg4', 'Gij': 'vout_cout'} ),
-                
-        ]                
-            
+
+        ]
+
 class Adder32Bit_Ladner_Fischer(CombinationalBlock):
     inputs = [
-              'vin_cin', 
-              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10', 
-              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20', 
+              'vin_cin',
+              'vin_a0', 'vin_a1', 'vin_a2', 'vin_a3', 'vin_a4', 'vin_a5', 'vin_a6', 'vin_a7', 'vin_a8','vin_a9', 'vin_a10',
+              'vin_a11', 'vin_a12', 'vin_a13', 'vin_a14', 'vin_a15', 'vin_a16', 'vin_a17', 'vin_a18', 'vin_a19', 'vin_a20',
               'vin_a21', 'vin_a22', 'vin_a23', 'vin_a24', 'vin_a25', 'vin_a26', 'vin_a27', 'vin_a28', 'vin_a29', 'vin_a30',
               'vin_a31',
-              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10', 
-              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20', 
+              'vin_b0', 'vin_b1', 'vin_b2', 'vin_b3', 'vin_b4', 'vin_b5', 'vin_b6', 'vin_b7', 'vin_b8', 'vin_b9', 'vin_b10',
+              'vin_b11', 'vin_b12', 'vin_b13', 'vin_b14', 'vin_b15', 'vin_b16', 'vin_b17', 'vin_b18', 'vin_b19', 'vin_b20',
               'vin_b21', 'vin_b22', 'vin_b23', 'vin_b24', 'vin_b25', 'vin_b26', 'vin_b27', 'vin_b28', 'vin_b29', 'vin_b30',
-              'vin_b31', 
+              'vin_b31',
               ]
     outputs = [
-               'vout_cout', 
+               'vout_cout',
                's0', 's1', 's2', 's3', 's4','s5', 's6', 's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17',
-               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31', 
+               's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25', 's26', 's27', 's28', 's29', 's30', 's31',
                ]
     internal_nodes = [
-                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16', 
-                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31', 
-                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16', 
-                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',  
-                      
-                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15', 
-                      'gg16', 'gg17', 'gg18', 'gg19', 'gg20', 'gg21', 'gg22', 'gg23', 'gg24', 'gg25', 'gg26', 'gg27', 'gg28', 'gg29', 'gg30', 'g31', 
-                      
-                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15', 
+                      'p0', 'p1','p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16',
+                      'p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31',
+                      'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12', 'g13', 'g14', 'g15', 'g16',
+                      'g17', 'g18', 'g19', 'g20', 'g21', 'g22', 'g23', 'g24', 'g25', 'g26', 'g27', 'g28', 'g29', 'g30', 'g31',
+
+                      'gg0', 'gg1', 'gg2', 'gg3', 'gg4', 'gg5', 'gg6', 'gg7', 'gg8', 'gg9', 'gg10', 'gg11', 'gg12', 'gg13', 'gg14', 'gg15',
+                      'gg16', 'gg17', 'gg18', 'gg19', 'gg20', 'gg21', 'gg22', 'gg23', 'gg24', 'gg25', 'gg26', 'gg27', 'gg28', 'gg29', 'gg30', 'g31',
+
+                      'bg0', 'bg1', 'bg2', 'bg3', 'bg4', 'bg5', 'bg6', 'bg7', 'bg8', 'bg9', 'bg10', 'bg11', 'bg12', 'bg13', 'bg14', 'bg15',
                       'bg16', 'bg17', 'bg18', 'bg19', 'bg20', 'bg21', 'bg22', 'bg23', 'bg24', 'bg25', 'bg26', 'bg27', 'bg28', 'bg29', 'bg30',
-                      'bg31', 
-                      
-                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15', 
+                      'bg31',
+
+                      'bp0', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5', 'bp6', 'bp7', 'bp8', 'bp9', 'bp10', 'bp11', 'bp12', 'bp13', 'bp14', 'bp15',
                       'bp16', 'bp17', 'bp18', 'bp19', 'bp20', 'bp21', 'bp22', 'bp23', 'bp24', 'bp25', 'bp26', 'bp27', 'bp28', 'bp29', 'bp30',
-                      'bp31', 
- 
+                      'bp31',
+
                       ]
     class_blocks = [
         ('pg0', PGCell, {'vin1':'vin_a0', 'vin2': 'vin_b0', 'P':'p0', 'G':'g0'} ),
@@ -1149,9 +1149,9 @@ class Adder32Bit_Ladner_Fischer(CombinationalBlock):
         ('black11', BlackCell, {'Gik':'g24','Pik':'p24','Gk_1j':'g23', 'Pk_1j':'p23', 'Gij': 'bg11', 'Pij': 'bp11'} ),
         ('black12', BlackCell, {'Gik':'g26','Pik':'p26','Gk_1j':'g25', 'Pk_1j':'p25', 'Gij': 'bg12', 'Pij': 'bp12'} ),
         ('black13', BlackCell, {'Gik':'g28','Pik':'p28','Gk_1j':'g27', 'Pk_1j':'p27', 'Gij': 'bg13', 'Pij': 'bp13'} ),
-        ('black14', BlackCell, {'Gik':'g30','Pik':'p30','Gk_1j':'g29', 'Pk_1j':'p29', 'Gij': 'bg14', 'Pij': 'bp14'} ),  
+        ('black14', BlackCell, {'Gik':'g30','Pik':'p30','Gk_1j':'g29', 'Pk_1j':'p29', 'Gij': 'bg14', 'Pij': 'bp14'} ),
         #row 2
-        ('gray1', GrayCell, {'Gik':'bg0','Pik':'bp0','Gk_1j':'gg0', 'Gij': 'gg1'} ),        
+        ('gray1', GrayCell, {'Gik':'bg0','Pik':'bp0','Gk_1j':'gg0', 'Gij': 'gg1'} ),
         ('black15', BlackCell, {'Gik':'bg2','Pik':'bp2','Gk_1j':'bg1', 'Pk_1j':'bp1', 'Gij': 'bg15', 'Pij': 'bp15'} ),
         ('black16', BlackCell, {'Gik':'bg4','Pik':'bp4','Gk_1j':'bg3', 'Pk_1j':'bp3', 'Gij': 'bg16', 'Pij': 'bp16'} ),
         ('black17', BlackCell, {'Gik':'bg6','Pik':'bp6','Gk_1j':'bg5', 'Pk_1j':'bp5', 'Gij': 'bg17', 'Pij': 'bp17'} ),
@@ -1172,12 +1172,12 @@ class Adder32Bit_Ladner_Fischer(CombinationalBlock):
         ('gray4', GrayCell, {'Gik':'bg3','Pik':'bp3','Gk_1j':'gg3', 'Gij': 'gg4'} ),
         ('gray5', GrayCell, {'Gik':'bg16','Pik':'bp16','Gk_1j':'gg3', 'Gij': 'gg5'} ),
         ('gray6', GrayCell, {'Gik':'bg22','Pik':'bp22','Gk_1j':'gg3', 'Gij': 'gg6'} ),
-        ('gray7', GrayCell, {'Gik':'bg23','Pik':'bp23','Gk_1j':'gg3', 'Gij': 'gg7'} ),                
+        ('gray7', GrayCell, {'Gik':'bg23','Pik':'bp23','Gk_1j':'gg3', 'Gij': 'gg7'} ),
         ('black28', BlackCell, {'Gik':'bg11','Pik':'bp11','Gk_1j':'bg25', 'Pk_1j':'bp25', 'Gij': 'bg28', 'Pij': 'bp28'} ),
-        ('black29', BlackCell, {'Gik':'bg20','Pik':'bp20','Gk_1j':'bg25', 'Pk_1j':'bp25', 'Gij': 'bg29', 'Pij': 'bp29'} ),        
+        ('black29', BlackCell, {'Gik':'bg20','Pik':'bp20','Gk_1j':'bg25', 'Pk_1j':'bp25', 'Gij': 'bg29', 'Pij': 'bp29'} ),
         ('black30', BlackCell, {'Gik':'bg26','Pik':'bp26','Gk_1j':'bg25', 'Pk_1j':'bp25', 'Gij': 'bg30', 'Pij': 'bp30'} ),
         ('black31', BlackCell, {'Gik':'bg27','Pik':'bp27','Gk_1j':'bg25', 'Pk_1j':'bp25', 'Gij': 'bg31', 'Pij': 'bp31'} ),
-        #row 5                   
+        #row 5
         ('gray8', GrayCell, {'Gik':'bg7','Pik':'bp7','Gk_1j':'gg7', 'Gij': 'gg8'} ),
         ('gray9', GrayCell, {'Gik':'bg18','Pik':'bp18','Gk_1j':'gg7', 'Gij': 'gg9'} ),
         ('gray10', GrayCell, {'Gik':'bg24','Pik':'bp24','Gk_1j':'gg7', 'Gij': 'gg10'} ),
@@ -1202,7 +1202,7 @@ class Adder32Bit_Ladner_Fischer(CombinationalBlock):
         ('gray28', GrayCell, {'Gik':'g25','Pik':'p25','Gk_1j':'gg12', 'Gij': 'gg28'} ),
         ('gray29', GrayCell, {'Gik':'g27','Pik':'p27','Gk_1j':'gg13', 'Gij': 'gg29'} ),
         ('gray30', GrayCell, {'Gik':'g29','Pik':'p29','Gk_1j':'gg14', 'Gij': 'gg30'} ),
-        
+
         ('sum0', Xor2, {'vin1': 'vin_cin', 'vin2': 'p0', 'vout': 's0'} ),
         ('sum1', Xor2, {'vin1': 'gg0', 'vin2': 'p1', 'vout': 's1'} ),
         ('sum2', Xor2, {'vin1': 'gg16', 'vin2': 'p2', 'vout': 's2'} ),
@@ -1235,7 +1235,7 @@ class Adder32Bit_Ladner_Fischer(CombinationalBlock):
         ('sum29', Xor2, {'vin1': 'gg14', 'vin2': 'p29', 'vout': 's29'} ),
         ('sum30', Xor2, {'vin1': 'gg30', 'vin2': 'p30', 'vout': 's30'} ),
         ('sum31', Xor2, {'vin1': 'gg15', 'vin2': 'p31', 'vout': 's31'} ),
-        
+
         ('gray32', GrayCell, {'Gik':'g31','Pik':'p31','Gk_1j':'gg15', 'Gij': 'vout_cout'} ),
-                
-        ]        
+
+        ]

@@ -149,6 +149,8 @@ node::node(int in, int out,Network*lb){
     inWires=NULL;
     outWires=NULL;
     sch=NULL;
+    inc=in;
+    outc=out;
     if(lb!=NULL){
         sch=&(lb->sch);
         inWires=&lb->inwires;

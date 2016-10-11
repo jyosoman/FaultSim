@@ -188,7 +188,8 @@ class node:public baseNode{
     vector<InWire*> *inWires;
     vector<OutWire*> *outWires;
     scheduler<node>* sch;
-    Network *internalNetwork;    
+    Network *internalNetwork;   
+    int inc,outc;
     protected:
     void setVal(bool v,int id){
         (*outWires)[id]->set(v);
@@ -200,10 +201,12 @@ class node:public baseNode{
     }
 
     void resize(int in,int out);
-    
+
     void setLm(Network* lm) ;
     public:
     node(int in=2, int out=1,Network*lb=NULL);
+    int getInCount(){return inc;}
+    int getOutCount(){return outc;}
     bool isChanged() const ;
     bool isChanged(int i) const ;
     virtual void printName(){

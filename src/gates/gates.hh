@@ -27,6 +27,7 @@ class InvertorGate:public node{
 class XORGate:public  node{
     PMOSTransistor pa,pb;
     NMOSTransistor na,nb;
+    public:
     XORGate():node(2,1,NULL){
     }
     void output(){
@@ -47,9 +48,16 @@ class BufferGate:public node{
     public:
         BufferGate():node(1,1){
         }
+        
         void output(){
             setVal(getInVal(0),0);
         }
+
+        bool output(bool a){
+            setVal(a,0);
+            return a;
+        }
+
         void printName(){
             cout<<getLevel()<<'\t';
             std::cout<<"Buffer Gate "<<std::endl;

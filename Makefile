@@ -1,7 +1,7 @@
 CC        := g++
 LD        := g++
 
-CFLAGS	  := -Wall -O3
+CFLAGS	  := -Wall -g
 MODULES   := base gates logicModels parser
 TESTS	  := test
 SRC_DIR   := $(addprefix src/,$(MODULES))
@@ -27,7 +27,7 @@ endef
 
 all: checkdirs $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJ) $(TEST_OBJ)
+$(EXECUTABLE): $(OBJ) $(TEST_OBJ) $(SRC) $(TEST_SRC)
 	$(LD) $(OBJ) $(patsubst %.exe,%.o,$@) $(CFLAGS) -o $@ 
 
 

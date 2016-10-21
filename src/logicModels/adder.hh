@@ -48,11 +48,11 @@ class CLABlock:public node{
     }
 };
 
-template<int in,int out> class AdderBlocks:public node{
+class AdderBlocks:public node{
     public:
         static int x;
         int selfid;
-        AdderBlocks<in,out>():node(in,out){
+        AdderBlocks(int in,int out):node(in,out){
             selfid=x;
             x++;
         }
@@ -63,21 +63,20 @@ template<int in,int out> class AdderBlocks:public node{
             cout<<boolalpha<<getWire(id)->get()<<" ";
         }
         void printVals(){
+            cout<<getLevel()<<" ";
             for(int i=0;i<getInCount();i++)printIn(i);//cout<<endl;
             for(int i=0;i<getOutCount();i++)printOut(i);
             cout<<endl;
 
         }
-        virtual void output(){
-        }
 };
 
-template<int in,int out> int AdderBlocks<in,out>::x=1;
-class BlackCell:public AdderBlocks<4,2>{
+int AdderBlocks::x=0;
+class BlackCell:public AdderBlocks{
     AndGate a,b;
     OrGate c;
     public:
-    BlackCell():AdderBlocks<4,2>(){
+    BlackCell():AdderBlocks(4,2){
     }
     void printName(){
         cout<<"BlackCell :"<<selfid<<"\t";
@@ -86,14 +85,17 @@ class BlackCell:public AdderBlocks<4,2>{
     void output(){
         setVal(c.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
         setVal(b.output(getInVal(2),getInVal(3)),1);
-        printName();
+        /* printName(); */
+            node::output();
+        /* printName(); */
     }
 };
-class GrayCell:public AdderBlocks<3,1>{
+class GrayCell:public AdderBlocks{
     OrGate b;
     AndGate a;
     public:
-    GrayCell():AdderBlocks<3,1>(){}
+    GrayCell():AdderBlocks(3,1){
+    }
     void printName(){
         cout<<"GrayCell :"<<selfid<<"\t";
         printVals();
@@ -101,34 +103,38 @@ class GrayCell:public AdderBlocks<3,1>{
 
     void output(){
         setVal(b.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
-        printName();
+        /* printName(); */
+        node::output();
+        /* printName(); */
     }
 };
 
-class BaseCell:public AdderBlocks<2,2>{
+class BaseCell:public AdderBlocks{
     public:
         bool arr[2];
-        OrGate g;
+        AndGate g;
         XORGate p;
-        BaseCell():AdderBlocks<2,2>(){
+        BaseCell():AdderBlocks(2,2){
             arr[0]=arr[1]=false;
         }
         void printName(){
-            cout<<"BaseCell :"<<selfid<<"\t";
+            cout<<"Name:BaseCell :"<<selfid<<"\t";
             printVals();
         }
 
         void output(){
             setVal(g.output(getInVal(0),getInVal(1)),0);
             setVal(p.output(getInVal(0),getInVal(1)),1);
-            printName();
+            /* printName(); */
+            node::output();
+            /* printName(); */
         }
 };
 
-class BufferCell:public AdderBlocks<2,2>{
-    BufferGate p,g;
+class BufferCell:public AdderBlocks{
+    BufferGate g;
     public:
-    BufferCell():AdderBlocks(){
+    BufferCell():AdderBlocks(1,1){
     }
     void printName(){
         cout<<"BufferCell :"<<selfid<<"\t";
@@ -137,17 +143,32 @@ class BufferCell:public AdderBlocks<2,2>{
 
     void output(){
         setVal(g.output(getInVal(0)),0);
-        setVal(p.output(getInVal(1)),1);
-        printName();
+        node::output();
+        /* printName(); */
     }
 };
+class XORCell:public AdderBlocks{
+    XORGate g;
+    public:
+    XORCell():AdderBlocks(2,1){
+    }
+    void printName(){
+        cout<<"XORCell :"<<selfid<<"\t";
+        printVals();
+    }
 
+    void output(){
+        setVal(g.output(getInVal(0),getInVal(1)),0);
+        /* printName(); */
+        node::output();
+        /* printName(); */
+    }
+};
 
 template<int N> class KnowlesAdder:public node{
     public:
         template<int Z> class KnowlesAdderNetwork:public Network{
-            void getConnections(int arr[],int connections[6][32]){
-                int minArr[6][32];
+            void getConnections(int arr[],int connections[6][32],int minArr[7][32]){
                 for(int i=0;i<32;i++){
                     minArr[0][i]=i;
                     connections[0][i]=i;
@@ -189,21 +210,28 @@ template<int N> class KnowlesAdder:public node{
                     }
                     prePitch=pitch;
                     for(int j=0;j<32;j++){
-                        /* printf("%d\t",connections[i][j]); */
+                        /* printf("%d \t",connections[i][j]); */
                     }
                     /* printf("\n"); */
                 }
+                    for(int j=0;j<32;j++){
+                        minArr[6][j]=0;
+                    }
 
             }
 
 
-            node *blocks[6][32];
+            node *blocks[7][33];
             public:
             KnowlesAdderNetwork<Z>():Network(64,32){
+                blocks[0][0]=new BaseCell;
+                OutWire* wr=new OutWire(false);
+                blocks[0][0]->setWire(wr,0);
+                blocks[0][0]->setWire(wr,1);
                 for(int i=0;i<32;i++){
-                    blocks[0][i]=new BaseCell;
-                    addStartNode(blocks[0][i],i,0);
-                    addStartNode(blocks[0][i],i+32,1);
+                    blocks[0][i+1]=new BaseCell;
+                    addStartNode(blocks[0][i+1],i,0);
+                    addStartNode(blocks[0][i+1],i+32,1);
                 }
                 int dataArr[6];
                 dataArr[0]=0;
@@ -212,16 +240,19 @@ template<int N> class KnowlesAdder:public node{
                 dataArr[3]=3;
                 dataArr[4]=3;
                 int connections[7][32];
+                int minArr[7][32];
 
-                getConnections(dataArr,connections);
+                getConnections(dataArr,connections,minArr);
+                for(int i=0;i<32;i++){
+                    connections[6][i]=i;
+                }
                 for(int i=1;i<6;i++){
                     for(int j=0;j<32;j++){
-                        if(connections[i][j]==j){
+                        if(connections[i][j]==j&&minArr[i][j]==0){
                             blocks[i][j]=new BufferCell;
                             connect(blocks[i-1][j],blocks[i][j],0,0);
-                            connect(blocks[i-1][j],blocks[i][j],1,1);
                         }else{
-                            if(connections[i+1][j]==j){
+                            if(connections[i+1][j]==j&&minArr[i][j]==0){
                                 blocks[i][j]=new GrayCell;
                                 connect(blocks[i-1][j],blocks[i][j],0,0);
                                 connect(blocks[i-1][j],blocks[i][j],1,1);
@@ -236,8 +267,13 @@ template<int N> class KnowlesAdder:public node{
                         }
                     }
                 }
+
+
                 for(int j=0;j<32;j++){
-                    addEndNode(blocks[5][j],j,0);
+                    blocks[6][j]=new XORCell;
+                    connect(blocks[0][j+1],blocks[6][j],1,0);
+                    connect(blocks[5][j],blocks[6][j],0,1);
+                    addEndNode(blocks[6][j],j,0);
                 }
 
             }

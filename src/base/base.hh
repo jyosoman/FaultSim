@@ -66,6 +66,7 @@ class scheduler{
     }
 
     void set(T*n){
+
         if(n->getSchId()>=currSched){
             return;
         }
@@ -84,7 +85,7 @@ class scheduler{
                 curr++;
             }
             if(curr<nList.size()){
-                nList[curr].front()->output();
+                nList[curr].front()->output();//cout<<"Scheduling: ";nList[curr].front()->printName();
                 nList[curr].pop_front();
             }
         }
@@ -183,7 +184,7 @@ class Network{
 class node:public baseNode{
     std::vector<std::vector<node*> > next;
     unsigned int level;
-    int nodeid;
+    static int objCount;
     long long int lastSched;
     vector<InWire*> *inWires;
     vector<OutWire*> *outWires;
@@ -204,6 +205,7 @@ class node:public baseNode{
 
     void setLm(Network* lm) ;
     public:
+    int nodeid;
     node(int in=2, int out=1,Network*lb=NULL);
     int getInCount(){return inc;}
     int getOutCount(){return outc;}
@@ -253,5 +255,4 @@ class node:public baseNode{
         }
     }
 };
-
 #endif

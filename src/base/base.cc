@@ -27,8 +27,6 @@ bool OutWire::get(){
     return val;
 }
 
-
-
 void Network::output(){
     for(unsigned int i=0;i<inwires.size();i++){
         if(inwires[i]->isChanged())
@@ -40,7 +38,6 @@ void Network::output(){
     }
     sch.tick();
 }
-
 
 void Network::addNode(node* nn){
     nn->setSch(&sch);
@@ -78,7 +75,7 @@ void Network::runBFS(){
     list<node*> bfsTree,nextList;
     nodeVectorIterator iter=outnodes.begin(),end=outnodes.end();
     nodeListIterator iter2;
-    int level=0;
+    int level=1;
     for(;iter!=end;iter++){
         nextList.push_back(*iter);
         (*iter)->setLevel(level);
@@ -88,7 +85,7 @@ void Network::runBFS(){
         for(iter2=nextList.begin();iter2!=nextList.end();iter2++){
             nodeListIterator iterm=connections[*iter2].begin(),iend=connections[*iter2].end();
             for(;iterm!=iend;iterm++){
-                if((*iterm)->getLevel()==0){
+                if((*iterm)->getLevel()!=level){
                     (*iterm)->setLevel(level);
                     bfsTree.push_back(*iterm);
                 }
@@ -101,7 +98,7 @@ void Network::runBFS(){
         for(iter2=bfsTree.begin();iter2!=bfsTree.end();iter2++){
             nodeListIterator iterm=connections[*iter2].begin(),iend=connections[*iter2].end();
             for(;iterm!=iend;iterm++){
-                if((*iterm)->getLevel()==0){
+                if((*iterm)->getLevel()!=level){
                     (*iterm)->setLevel(level);
                     nextList.push_back(*iterm);
                 }
@@ -115,6 +112,7 @@ void Network::runBFS(){
     level--;
     for(map<node*,list<node*> >::iterator it = connections.begin(); it != connections.end(); ++it) {
         it->first->setLevel(level-it->first->getLevel());
+        addInternalNode(it->first);
         it->second.clear();
     }
     connections.clear();
@@ -140,11 +138,14 @@ void node::resize(int in,int out){
     }
     output();
 }
+
+int node::objCount=0;
 node::node(int in, int out,Network*lb){
     level=0;
     lastSched=-1;
     next.resize(out);
-    nodeid=-1;
+    nodeid=objCount;
+    objCount++;
     internalNetwork=lb;
     inWires=NULL;
     outWires=NULL;
@@ -165,7 +166,7 @@ node::node(int in, int out,Network*lb){
         outWires=new vector<OutWire*>();
         outWires->reserve(out);
         for(int i=0;i<out;i++){
-            outWires->push_back(new OutWire());
+            outWires->push_back(new OutWire(false));
         }
     }
     output();
@@ -174,6 +175,8 @@ node::node(int in, int out,Network*lb){
 void node::setNext(node* next,int xid) {
     if(((unsigned int)xid)<this->next.size())           {
         this->next[xid].push_back(next);
+    }else{
+        cout<<"Something went wrong!!"<<endl;
     }
 }
 
@@ -244,6 +247,7 @@ void node::output(){
             }
         }
     }
+    /* cout<<"scheduling next"<<endl; */
 }
 
 void node::setLm(Network* lm) {

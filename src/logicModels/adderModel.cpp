@@ -111,6 +111,7 @@ class GrayCell{
 void process(int arr[]){
     int connections[6][32];
     getConnections(arr,connections);    
+
     
 
 

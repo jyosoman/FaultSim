@@ -85,7 +85,10 @@ class scheduler{
                 curr++;
             }
             if(curr<nList.size()){
-                nList[curr].front()->output();//cout<<"Scheduling: ";nList[curr].front()->printName();
+                nList[curr].front()->output();
+#ifdef DEBUG
+                cout<<"Scheduling: ";nList[curr].front()->printName();
+#endif
                 nList[curr].pop_front();
             }
         }

@@ -19,7 +19,7 @@ vpath %.cc $(TEST_DIR)
 
 
 .PHONY: all checkdirs clean
-CFLAGS:=-O3 -DDEBUG
+CFLAGS:=-O3 
 all: checkdirs $(EXECUTABLE)
 debug: CFLAGS := -DDEBUG 
 debug: all

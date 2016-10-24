@@ -274,7 +274,6 @@ template<int N> class KnowlesAdder:public node{
                                 connect(blocks[i-1][connections[i][j]],blocks[i][j],1,3);
                             }
                         }
-                        blocks[i][j]->printName();
                     }
                 }
                 for(int j=0;j<32;j++){
@@ -302,6 +301,7 @@ class KSAdder:public Network{
 
     }
 };
+
 
 
 

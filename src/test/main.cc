@@ -6,7 +6,8 @@
 int main(){
     DFlipFlop f;
 //    TriNandGate tj;
-    OutWire arr[4],arr2[16];
+    OutWire arr[4];
+    /* OutWire arr2[16]; */
 //    Multiplexer<16,4> mux;
 //    MinpNandGate<4> fin;  
 //    Decoder<4> decode;

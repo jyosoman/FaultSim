@@ -75,7 +75,7 @@ void Network::runBFS(){
     list<node*> bfsTree,nextList;
     nodeVectorIterator iter=outnodes.begin(),end=outnodes.end();
     nodeListIterator iter2;
-    int level=1;
+    unsigned int level=1;
     for(;iter!=end;iter++){
         nextList.push_back(*iter);
         (*iter)->setLevel(level);

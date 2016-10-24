@@ -231,7 +231,7 @@ template<int N> class KnowlesAdder:public node{
             }
             node *blocks[7][33],*firstRow[33];
             public:
-            KnowlesAdderNetwork<Z>():Network(64,32){
+            KnowlesAdderNetwork<Z>(int*arr):Network(64,32){
                 firstRow[0]=new BaseCell;
                 blocks[0][0]=firstRow[0];
                 OutWire* wr=new OutWire(false);
@@ -244,11 +244,19 @@ template<int N> class KnowlesAdder:public node{
                     addStartNode(blocks[0][i+1],i+32,1);//B
                 }
                 int dataArr[6];
-                dataArr[0]=0;
-                dataArr[1]=0;
-                dataArr[2]=2;
-                dataArr[3]=3;
-                dataArr[4]=3;
+                if(arr==NULL){
+                    dataArr[0]=0;
+                    dataArr[1]=0;
+                    dataArr[2]=2;
+                    dataArr[3]=3;
+                    dataArr[4]=3;
+                }else{
+                    for(int i=0;i<5;i++){
+                        dataArr[i]=arr[i];
+                        cout<<dataArr[i]<<"\t";
+                    }
+                    cout<<endl;
+                }
                 int connections[7][32];
                 int minArr[7][32];
                 getConnections(dataArr,connections,minArr);
@@ -284,7 +292,7 @@ template<int N> class KnowlesAdder:public node{
                 }
             }
         };
-        KnowlesAdder<N>():node(2*N,N,new KnowlesAdderNetwork<N>()){
+        KnowlesAdder<N>(int* arr=NULL):node(2*N,N,new KnowlesAdderNetwork<N>(arr)){
         }
 
 };

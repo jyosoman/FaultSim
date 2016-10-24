@@ -84,7 +84,7 @@ class BlackCell:public AdderBlocks{
     }
     void output(){
         setVal(c.output(getInVal(0),a.output(getInVal(1),getInVal(2))),0);
-        setVal(b.output(getInVal(2),getInVal(3)),1);
+        setVal(b.output(getInVal(1),getInVal(3)),1);
         /* printName(); */
             node::output();
         /* printName(); */
@@ -174,6 +174,15 @@ template<int N> class KnowlesAdder:public node{
                     connections[0][i]=i;
                 }
                 int prePitch=1;
+#ifdef DEBUG
+                for(int i=0;i<32;i++)
+                    printf("%d\t",i+1);
+                cout<<endl;
+                for(int i=0;i<32;i++)
+                    cout<<"=\t";
+                cout<<endl;
+
+#endif
                 for(int i=1;i<=5;i++){
                     int pitch=1<<arr[i-1];
                     for(int j=0;j<pitch;j++){
@@ -209,29 +218,30 @@ template<int N> class KnowlesAdder:public node{
                         }
                     }
                     prePitch=pitch;
+#ifdef DEBUG                    
                     for(int j=0;j<32;j++){
-                        /* printf("%d \t",connections[i][j]); */
+                        printf("%d\t",connections[i][j]);
                     }
-                    /* printf("\n"); */
+                    printf("\n");
+#endif
                 }
-                    for(int j=0;j<32;j++){
-                        minArr[6][j]=0;
-                    }
-
+                for(int j=0;j<32;j++){
+                    minArr[6][j]=0;
+                }
             }
-
-
-            node *blocks[7][33];
+            node *blocks[7][33],*firstRow[33];
             public:
             KnowlesAdderNetwork<Z>():Network(64,32){
-                blocks[0][0]=new BaseCell;
+                firstRow[0]=new BaseCell;
+                blocks[0][0]=firstRow[0];
                 OutWire* wr=new OutWire(false);
-                blocks[0][0]->setWire(wr,0);
-                blocks[0][0]->setWire(wr,1);
+                firstRow[0]->setWire(wr,0);
+                firstRow[0]->setWire(wr,1);
                 for(int i=0;i<32;i++){
-                    blocks[0][i+1]=new BaseCell;
-                    addStartNode(blocks[0][i+1],i,0);
-                    addStartNode(blocks[0][i+1],i+32,1);
+                    firstRow[i+1]=new BaseCell;
+                    blocks[0][i+1]=firstRow[i+1];
+                    addStartNode(blocks[0][i+1],i,0); //A
+                    addStartNode(blocks[0][i+1],i+32,1);//B
                 }
                 int dataArr[6];
                 dataArr[0]=0;
@@ -241,7 +251,6 @@ template<int N> class KnowlesAdder:public node{
                 dataArr[4]=3;
                 int connections[7][32];
                 int minArr[7][32];
-
                 getConnections(dataArr,connections,minArr);
                 for(int i=0;i<32;i++){
                     connections[6][i]=i;
@@ -265,17 +274,15 @@ template<int N> class KnowlesAdder:public node{
                                 connect(blocks[i-1][connections[i][j]],blocks[i][j],1,3);
                             }
                         }
+                        blocks[i][j]->printName();
                     }
                 }
-
-
                 for(int j=0;j<32;j++){
                     blocks[6][j]=new XORCell;
-                    connect(blocks[0][j+1],blocks[6][j],1,0);
-                    connect(blocks[5][j],blocks[6][j],0,1);
+                    connect(blocks[5][j],blocks[6][j],0,0); //G
+                    connect(firstRow[j+1],blocks[6][j],1,1); //P
                     addEndNode(blocks[6][j],j,0);
                 }
-
             }
         };
         KnowlesAdder<N>():node(2*N,N,new KnowlesAdderNetwork<N>()){
@@ -295,3 +302,7 @@ class KSAdder:public Network{
 
     }
 };
+
+
+
+

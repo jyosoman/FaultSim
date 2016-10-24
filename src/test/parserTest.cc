@@ -7,7 +7,7 @@
 using namespace std;
 int main(){
     string x="a|(a&~b)";
-    node*net=parseString(x);
+    /* node*net=parseString(x); */
     cout<<x<<endl;    
     return 0;
 }

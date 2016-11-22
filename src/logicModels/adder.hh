@@ -232,12 +232,15 @@ template<int N> class KnowlesAdder:public node{
             node *blocks[7][33],*firstRow[33];
             public:
             KnowlesAdderNetwork<Z>(int*arr):Network(64,32){
+
+                cout<<"BaseCell:"<<FaultType::flist.size()<<endl;
                 firstRow[0]=new BaseCell;
                 blocks[0][0]=firstRow[0];
                 OutWire* wr=new OutWire(false);
                 firstRow[0]->setWire(wr,0);
                 firstRow[0]->setWire(wr,1);
                 for(int i=0;i<32;i++){
+                    cout<<"BaseCell:"<<FaultType::flist.size()<<endl;
                     firstRow[i+1]=new BaseCell;
                     blocks[0][i+1]=firstRow[i+1];
                     addStartNode(blocks[0][i+1],i,0); //A
@@ -266,15 +269,18 @@ template<int N> class KnowlesAdder:public node{
                 for(int i=1;i<6;i++){
                     for(int j=0;j<32;j++){
                         if(connections[i][j]==j&&minArr[i][j]==0){
+                            cout<<"BufferCell:"<<FaultType::flist.size()<<endl;
                             blocks[i][j]=new BufferCell;
                             connect(blocks[i-1][j],blocks[i][j],0,0);
                         }else{
                             if(connections[i+1][j]==j&&minArr[i][j]==0){
+                                cout<<"GrayCell:"<<FaultType::flist.size()<<endl;
                                 blocks[i][j]=new GrayCell;
                                 connect(blocks[i-1][j],blocks[i][j],0,0);
                                 connect(blocks[i-1][j],blocks[i][j],1,1);
                                 connect(blocks[i-1][connections[i][j]],blocks[i][j],0,2);
                             }else{
+                                cout<<"BlackCell:"<<FaultType::flist.size()<<endl;
                                 blocks[i][j]=new BlackCell;
                                 connect(blocks[i-1][j],blocks[i][j],0,0);
                                 connect(blocks[i-1][j],blocks[i][j],1,1);
@@ -285,11 +291,13 @@ template<int N> class KnowlesAdder:public node{
                     }
                 }
                 for(int j=0;j<32;j++){
+                    cout<<"XOR:"<<FaultType::flist.size()<<endl;
                     blocks[6][j]=new XORCell;
                     connect(blocks[5][j],blocks[6][j],0,0); //G
                     connect(firstRow[j+1],blocks[6][j],1,1); //P
                     addEndNode(blocks[6][j],j,0);
                 }
+                cout<<FaultType::flist.size()<<endl;
             }
         };
         KnowlesAdder<N>(int* arr=NULL):node(2*N,N,new KnowlesAdderNetwork<N>(arr)){

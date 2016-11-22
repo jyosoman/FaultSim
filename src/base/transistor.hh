@@ -4,10 +4,13 @@
 #include <cstddef>
 #include"base.hh"
 #include<list>
+
+
 class FaultType{
     protected:
     public:
         static std::list<FaultType*> flist;
+        static int tcount;
         typedef std::list<FaultType*>::iterator FLiterator;
         bool faulty, fout;
         FaultType(bool fault, bool fout);

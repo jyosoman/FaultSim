@@ -6,6 +6,8 @@
 #include<map>
 #include<cstdio>
 using namespace std;
+
+
 class Wire{
     public:
     virtual void set(bool v)=0;

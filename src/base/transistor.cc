@@ -6,9 +6,11 @@ FaultType::FaultType(bool fault, bool fout){
 }
 
 std::list<FaultType*> FaultType::flist(0);
+int FaultType::tcount=0;
 
 FaultType::FaultType(){
     faulty=false;
+    tcount++;
 }
 
 bool FaultType::getOut(){

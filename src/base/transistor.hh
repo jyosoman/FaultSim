@@ -20,6 +20,8 @@ class FaultType{
             faulty=a;
             fout=b;
         }
+        ~FaultType(){
+        }
 };
 class PMOSTransistor:public FaultType{
     public:
@@ -29,6 +31,7 @@ class PMOSTransistor:public FaultType{
         void setFaulty(){
             FaultType::setFaulty(true,true);
         }
+        ~PMOSTransistor();
 };
 class NMOSTransistor:public FaultType{
     public:
@@ -38,6 +41,7 @@ class NMOSTransistor:public FaultType{
         void setFaulty(){
             FaultType::setFaulty(true,false);
         }
+        ~NMOSTransistor();
 
 };
 

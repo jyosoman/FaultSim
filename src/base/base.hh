@@ -117,7 +117,7 @@ class Network{
     /*
      *  Data structure to keep track of start and end nodes
      */
-    vector<node*> innodes,outnodes;
+    vector<node*> innodes,outnodes,allNodes;
     /*
      *  Data structure to maintain list of internal connections. 
      *
@@ -184,6 +184,7 @@ class Network{
      */
     void connect(OutWire* w,int inid);
     void runBFS();
+    virtual ~Network();
 };
 
 class node:public baseNode{
@@ -241,6 +242,20 @@ class node:public baseNode{
     */
     unsigned int getLevel();
     virtual void output();
+    virtual ~node(){
+        if(internalNetwork==NULL){
+            for(int i=0;i<inWires->size();i++){
+                delete inWires->at(i);
+            }
+            delete inWires;
+            for(int i=0;i<outWires->size();i++){
+                delete outWires->at(i);
+            }
+            delete outWires;
+        }else{
+            delete internalNetwork;
+        }
+    }
     void test(){
         std::cout<<"Testing"<<'\n';
         for(int i=0;i<1<<(inWires->size());i++){

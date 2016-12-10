@@ -36,6 +36,10 @@ bool PMOSTransistor::output(bool in,bool top){
     return v;
 }
 
+PMOSTransistor::~PMOSTransistor(){
+    flist.remove(this);
+}
+
 NMOSTransistor::NMOSTransistor(bool fault):FaultType(fault, false){
     flist.push_back(this);
 }
@@ -54,4 +58,6 @@ bool NMOSTransistor::output(bool in,bool bottom){
     }
     return v;
 }
-
+NMOSTransistor::~NMOSTransistor(){
+    flist.remove(this);
+}

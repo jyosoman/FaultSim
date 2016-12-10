@@ -1,4 +1,5 @@
 #include"base.hh"
+#include <algorithm>
 
 OutWire::OutWire(bool v){
     val=v;
@@ -38,8 +39,19 @@ void Network::output(){
     }
     sch.tick();
 }
+Network::~Network(){
+    for(int i=0;i<inwires.size();i++){
+        delete inwires.at(i);
+    }
+    for(int i=0;i<allNodes.size();i++){
+        delete allNodes[i];
+    }
+
+}
 
 void Network::addNode(node* nn){
+    if(std::find(allNodes.begin(), allNodes.end(), nn) == allNodes.end())
+        allNodes.push_back(nn);
     nn->setSch(&sch);
 }
 

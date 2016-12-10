@@ -1,6 +1,8 @@
 #include"adder.hh"
 #include<cstdlib>
 #include"testInfra.hh"
+#include<string>
+#include<cstring>
 void process(int*arr){
     KnowlesAdder<32>*kadder;
     kadder=new KnowlesAdder<32>(arr);
@@ -35,38 +37,45 @@ void getLC(int l, int c,int *arr){
     }
     return ;
 }
-int main(int argc, char*argv[]){
+extern "C" char* runMain(int argc, char*argv[]){
     KnowlesAdder<32>*kadder;
     kadder=new KnowlesAdder<32>();
     Tester<32,32,32> T(kadder);
 
 
-    /* cout<<"Testing begins"<<endl; */
-    /* T.testVal(0xffffffff,0xffffffff); */
-    /* T.testVal(0x7000,0x9000); */
-    /* T.testVal(0x0070,0x0090); */
-    /* T.testVal(0xefffffff,0xfefefefe); */
-    uint32_t x,y,r;
-    /* for(int i=0;i<1000000;i++){ */
-    /*     x=rand(); */
-    /*     y=rand(); */
-    /*     r=T.testVal(x,y); */
-    /*     if(r!=(x+y)){ */
-    /*         printf("%u %u: %u X %u\n",x,y,r,x+y); */
-    /*     } */
-    /* } */
+    int l,r;
+    string retString="";
     if(argc>1){
-        FILE*cFile;
-        if(argc==2){
+        FILE*cFile=NULL;
+        bool fromFile=false;
+        if(argc==3){
             cFile=fopen("config.txt","r");
+            cout<<"Config.txt"<<endl;
+            fromFile=true;
         }else{
-            cFile=fopen(argv[2],"r");
+            if(argc==4){
+                cFile=fopen(argv[2],"r");
+                fromFile=true;
+            }            
         }
-        int eNum;
-        fscanf(cFile,"%d",eNum);
-        for(int i=0;i<eNum;i++){
-            int l,r;
-            fscanf(cFile,"%d %d\n",&l,&r);
+        if(fromFile){
+            int eNum=0;
+            int retv=fscanf(cFile,"%d",&eNum);
+            cout<<retv<<endl;
+            for(int j=0;j<eNum;j++){
+                /* int l,r; */
+                fscanf(cFile,"%d %d\n",&l,&r);
+                retString+=std::to_string(l)+" "+std::to_string(r)+" ";
+                /* cout<<l<<" "<<r<<endl; */
+                FaultType::FLiterator fliter=FaultType::flist.begin();
+                std::advance(fliter, l);(*fliter)->setFaulty();
+                for(int i=l;i<r;i++,++fliter){
+                    (*fliter)->setFaulty();
+                }
+            }
+        }else{
+            l=atoi(argv[2]),r=atoi(argv[3]);
+            retString+=to_string(l)+" "+to_string(r)+" "+string(argv[4]);
             FaultType::FLiterator fliter=FaultType::flist.begin();
             std::advance(fliter, l);(*fliter)->setFaulty();
             for(int i=l;i<r;i++,++fliter){
@@ -76,14 +85,83 @@ int main(int argc, char*argv[]){
 
         FILE*fp;
         fp=fopen(argv[1],"r");
-        printf("%s \n",argv[1]);
-        unsigned int x,y,z;
+        /* printf("%s \n",argv[1]); */
+        unsigned int x=0,y=0,z=0,ec=0;
         char arr[50];
+        int rv;
         while(fscanf(fp,"%s %u %u %u\n",arr,&x,&y,&z)!=EOF){
-            r=T.testVal(x,y);
-            if(r!=z){
-                printf("%u %u: %u X %u\n",x,y,r,x+y);
+            rv=T.testVal(x,y);
+            if(rv!=z){
+                ec++;
+                /* printf("%u %u: %u X %u\n",x,y,rv,x+y); */
             }
         }
+        /* cout<<l<<" "<<r<<"\t"<<"Error Count is "<<ec<<endl; */
+        retString+="Error Count: "+to_string(ec);
     }
+    char* arr=(char*)malloc(retString.length());
+    strcpy(arr,retString.c_str());
+    delete kadder;
+    return arr;
+
+}
+int main(int argc, char*argv[]){
+    cout<<runMain(argc,argv)<<" "<<argv[argc-1]<<endl;
+    return 0;
+    /* KnowlesAdder<32>*kadder; */
+    /* kadder=new KnowlesAdder<32>(); */
+    /* Tester<32,32,32> T(kadder); */
+
+
+    /* uint32_t x,y; */
+    /* int l,r; */
+    /* if(argc>1){ */
+    /*     FILE*cFile=NULL; */
+    /*     bool fromFile=false; */
+    /*     if(argc==2){ */
+    /*         cFile=fopen("config.txt","r"); */
+    /*         cout<<"Config.txt"<<endl; */
+    /*     }else{ */
+    /*         if(argc==3){ */
+    /*             cFile=fopen(argv[2],"r"); */
+    /*         } */            
+    /*     } */
+    /*     if(fromFile){ */
+    /*         int eNum=0; */
+    /*         int retv=fscanf(cFile,"%d",&eNum); */
+    /*         cout<<retv<<endl; */
+    /*         for(int j=0;j<eNum;j++){ */
+    /*             /1* int l,r; *1/ */
+    /*             fscanf(cFile,"%d %d\n",&l,&r); */
+    /*             /1* cout<<l<<" "<<r<<endl; *1/ */
+    /*             FaultType::FLiterator fliter=FaultType::flist.begin(); */
+    /*             std::advance(fliter, l);(*fliter)->setFaulty(); */
+    /*             for(int i=l;i<r;i++,++fliter){ */
+    /*                 (*fliter)->setFaulty(); */
+    /*             } */
+    /*         } */
+    /*     }else{ */
+    /*         l=atoi(argv[2]),r=atoi(argv[3]); */
+    /*         FaultType::FLiterator fliter=FaultType::flist.begin(); */
+    /*         std::advance(fliter, l);(*fliter)->setFaulty(); */
+    /*         for(int i=l;i<r;i++,++fliter){ */
+    /*             (*fliter)->setFaulty(); */
+    /*         } */
+    /*     } */
+
+    /*     FILE*fp; */
+    /*     fp=fopen(argv[1],"r"); */
+    /*     /1* printf("%s \n",argv[1]); *1/ */
+    /*     unsigned int x=0,y=0,z=0,ec=0; */
+    /*     char arr[50]; */
+    /*     int rv; */
+    /*     while(fscanf(fp,"%s %u %u %u\n",arr,&x,&y,&z)!=EOF){ */
+    /*         rv=T.testVal(x,y); */
+    /*         if(rv!=z){ */
+    /*             ec++; */
+    /*             /1* printf("%u %u: %u X %u\n",x,y,rv,x+y); *1/ */
+    /*         } */
+    /*     } */
+    /*     cout<<l<<" "<<r<<"\t"<<"Error Count is "<<ec<<endl; */
+    /* } */
 }

@@ -39,41 +39,91 @@ void getLC(int l, int c,int *arr){
 }
 extern "C" char* runMain(int argc, char*argv[]){
     KnowlesAdder<32>*kadder;
-    kadder=new KnowlesAdder<32>();
-    Tester<32,32,32> T(kadder);
-
-
+int larr[42][5]={
+    {0,0,0,0,0},
+{0,0,0,0,1},
+{0,0,0,0,2},
+{0,0,0,0,3},
+{0,0,0,0,4},
+{0,0,0,1,1},
+{0,0,0,1,2},
+{0,0,0,1,3},
+{0,0,0,1,4},
+{0,0,0,2,2},
+{0,0,0,2,3},
+{0,0,0,2,4},
+{0,0,0,3,3},
+{0,0,0,3,4},
+{0,0,1,1,1},
+{0,0,1,1,2},
+{0,0,1,1,3},
+{0,0,1,1,4},
+{0,0,1,2,2},
+{0,0,1,2,3},
+{0,0,1,2,4},
+{0,0,1,3,3},
+{0,0,1,3,4},
+{0,0,2,2,2},
+{0,0,2,2,3},
+{0,0,2,2,4},
+{0,0,2,3,3},
+{0,0,2,3,4},
+{0,1,1,1,1},
+{0,1,1,1,2},
+{0,1,1,1,3},
+{0,1,1,1,4},
+{0,1,1,2,2},
+{0,1,1,2,3},
+{0,1,1,2,4},
+{0,1,1,3,3},
+{0,1,1,3,4},
+{0,1,2,2,2},
+{0,1,2,2,3},
+{0,1,2,2,4},
+{0,1,2,3,3},
+{0,1,2,3,4}};
     int l,r;
     string retString="";
-    if(argc>1){
+    if(argc>4){
+        int index=atoi(argv[4]);
+        int dataArr[6];
+        for(int i=0;i<6;i++){
+            dataArr[i]=larr[index][i];
+        }
+
+
+        kadder=new KnowlesAdder<32>(dataArr);
+        Tester<32,32,32> T(kadder);
+
         FILE*cFile=NULL;
         bool fromFile=false;
-        if(argc==3){
-            cFile=fopen("config.txt","r");
-            cout<<"Config.txt"<<endl;
-            fromFile=true;
-        }else{
-            if(argc==4){
-                cFile=fopen(argv[2],"r");
-                fromFile=true;
-            }            
-        }
-        if(fromFile){
-            int eNum=0;
-            int retv=fscanf(cFile,"%d",&eNum);
-            cout<<retv<<endl;
-            for(int j=0;j<eNum;j++){
-                /* int l,r; */
-                fscanf(cFile,"%d %d\n",&l,&r);
-                retString+=std::to_string(l)+" "+std::to_string(r)+" ";
-                /* cout<<l<<" "<<r<<endl; */
-                FaultType::FLiterator fliter=FaultType::flist.begin();
-                std::advance(fliter, l);(*fliter)->setFaulty();
-                for(int i=l;i<r;i++,++fliter){
-                    (*fliter)->setFaulty();
-                }
-            }
-        }else{
+        /* if(argc==3){ */
+        /*     cFile=fopen("config.txt","r"); */
+        /*     cout<<"Config.txt"<<endl; */
+        /*     fromFile=true; */
+        /* }else{ */
+        /*     if(argc==4){ */
+        /*         cFile=fopen(argv[2],"r"); */
+        /*         fromFile=true; */
+        /*     } */            
+        /* } */
+        /* if(fromFile){ */
+        /*     int eNum=0; */
+        /*     int retv=fscanf(cFile,"%d",&eNum); */
+        /*     cout<<retv<<endl; */
+        /*     for(int j=0;j<eNum;j++){ */
+        /*         /1* int l,r; *1/ */
+        /*         fscanf(cFile,"%d %d\n",&l,&r); */
+        /*         retString+=std::to_string(l)+" "+std::to_string(r)+" "; */
+        /*         /1* cout<<l<<" "<<r<<endl; *1/ */
+        /*         FaultType::FLiterator fliter=FaultType::flist.begin(); */
+        /*         std::advance(fliter, l);(*fliter)->setFaulty(); */
+        /*         for(int i=l;i<r;i++,++fliter){ */
+        /*             (*fliter)->setFaulty(); */
+        /*         } */
+        /*     } */
+        /* }else */
+        {
             l=atoi(argv[2]),r=atoi(argv[3]);
             retString+=to_string(l)+" "+to_string(r)+" "+string(argv[4]);
             FaultType::FLiterator fliter=FaultType::flist.begin();
@@ -103,7 +153,6 @@ extern "C" char* runMain(int argc, char*argv[]){
     strcpy(arr,retString.c_str());
     delete kadder;
     return arr;
-
 }
 int main(int argc, char*argv[]){
     cout<<runMain(argc,argv)<<" "<<argv[argc-1]<<endl;

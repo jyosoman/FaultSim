@@ -149,7 +149,7 @@ int larr[42][5]={
         /* cout<<l<<" "<<r<<"\t"<<"Error Count is "<<ec<<endl; */
         retString+="Error Count: "+to_string(ec);
     }
-    cerr<"Finishing Task"<<endl;
+    cerr<<"Finishing Task"<<endl;
     char* arr=(char*)malloc(retString.length());
     strcpy(arr,retString.c_str());
     delete kadder;

@@ -25,7 +25,7 @@ def f(i):
         lock.release()
         # res=call_c([l[0],"/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10)])
         # print >>f, "%d %s",(l, res)
-        call(["./build/test/bmTestAdder.exe","/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10),l[0]],stdout=f)
+        call(["./build/test/bmTestAdder.exe","/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10),str(0),l[0]],stdout=f)
 
 
 

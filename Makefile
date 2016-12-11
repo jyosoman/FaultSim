@@ -23,12 +23,12 @@ vpath %.cc $(TEST_DIR)
 
 
 .PHONY: all checkdirs clean
-CFLAGS:=   -std=c++11
+CFLAGS:=   -std=c++11 -O3
 all: checkdirs $(EXECUTABLE) $(PYSHAREDLIB) $(SRC)
 debug: CFLAGS := -DDEBUG 
 debug: all
 
-CFLAGS	  += -Wall -g -p 
+CFLAGS	  += -Wall 
 
 $(OBJ):$(SRC)
 	$(CC) $(INCLUDES) $(CFLAGS) -fPIC -c $(patsubst build/%.o,src/%.cc,$@) -o $@

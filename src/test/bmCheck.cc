@@ -154,7 +154,7 @@ int larr[42][5]={
                 unsigned int strtIndex=31-__builtin_clz(bitDiff);
                 unsigned int mask=1<<strtIndex;
                 for(int i=strtIndex;i>=0;i--){
-                    if(bitDiff&mask!=0)
+                    if((bitDiff&mask)!=0)
                         varPos[i]++;
                     mask>>=1;
                 }
@@ -171,7 +171,7 @@ int larr[42][5]={
         }
         retString+="Error Count: "+to_string(ec)+ " ";
         for(int i=31;i>=0;i--){
-            retString+=to_string(varPos[i])+" "+to_string(varMax[i])+" ";
+            retString+=to_string(varPos[i])+","+to_string(varMax[i])+"; ";
         }
     }
     cerr<<"Finishing Task"<<endl;
@@ -188,7 +188,7 @@ double elapsed(clock_t begin){
 }
 int main(int argc, char*argv[]){
     clock_t begin = clock();
-    cout<<runMain(argc,argv)<<" "<<argv[argc-1];
+    cout<<runMain(argc,argv)<<" "<<argv[argc-1]<<" ";
     cout<<elapsed(begin)<<endl;
 
     return 0;

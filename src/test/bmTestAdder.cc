@@ -3,6 +3,7 @@
 #include"testInfra.hh"
 #include<string>
 #include<cstring>
+#include<ctime>
 void process(int*arr){
     KnowlesAdder<32>*kadder;
     kadder=new KnowlesAdder<32>(arr);
@@ -152,11 +153,20 @@ int larr[42][5]={
     cerr<<"Finishing Task"<<endl;
     char* arr=(char*)malloc(retString.length());
     strcpy(arr,retString.c_str());
+
     delete kadder;
     return arr;
 }
+double elapsed(clock_t begin){
+    clock_t end = clock();
+    return ( double(end - begin) / CLOCKS_PER_SEC);
+
+}
 int main(int argc, char*argv[]){
-    cout<<runMain(argc,argv)<<" "<<argv[argc-1]<<endl;
+    clock_t begin = clock();
+    cout<<runMain(argc,argv)<<" "<<argv[argc-1];
+    cout<<elapsed(begin)<<endl;
+
     return 0;
     /* KnowlesAdder<32>*kadder; */
     /* kadder=new KnowlesAdder<32>(); */

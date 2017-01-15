@@ -3,7 +3,6 @@
 #include"testInfra.hh"
 #include<string>
 #include<cstring>
-#include<ctime>
 void process(int*arr){
     KnowlesAdder<32>*kadder;
     kadder=new KnowlesAdder<32>(arr);
@@ -98,32 +97,6 @@ int larr[42][5]={
 
         FILE*cFile=NULL;
         bool fromFile=false;
-        /* if(argc==3){ */
-        /*     cFile=fopen("config.txt","r"); */
-        /*     cout<<"Config.txt"<<endl; */
-        /*     fromFile=true; */
-        /* }else{ */
-        /*     if(argc==4){ */
-        /*         cFile=fopen(argv[2],"r"); */
-        /*         fromFile=true; */
-        /*     } */            
-        /* } */
-        /* if(fromFile){ */
-        /*     int eNum=0; */
-        /*     int retv=fscanf(cFile,"%d",&eNum); */
-        /*     cout<<retv<<endl; */
-        /*     for(int j=0;j<eNum;j++){ */
-        /*         /1* int l,r; *1/ */
-        /*         fscanf(cFile,"%d %d\n",&l,&r); */
-        /*         retString+=std::to_string(l)+" "+std::to_string(r)+" "; */
-        /*         /1* cout<<l<<" "<<r<<endl; *1/ */
-        /*         FaultType::FLiterator fliter=FaultType::flist.begin(); */
-        /*         std::advance(fliter, l);(*fliter)->setFaulty(); */
-        /*         for(int i=l;i<r;i++,++fliter){ */
-        /*             (*fliter)->setFaulty(); */
-        /*         } */
-        /*     } */
-        /* }else */
         {
             l=atoi(argv[2]),r=atoi(argv[3]);
             retString+=to_string(l)+" "+to_string(r)+" "+string(argv[4]);
@@ -140,7 +113,12 @@ int larr[42][5]={
         unsigned int x=0,y=0,z=0,ec=0;
         char arr[50];
         int rv;
+        int addCount=0;
         while(fscanf(fp,"%s %u %u %u\n",arr,&x,&y,&z)!=EOF){
+            addCount++;
+            if(addCount==1000000){
+                break;
+            }
             rv=T.testVal(x,y);
             if(rv!=z){
                 ec++;
@@ -153,20 +131,10 @@ int larr[42][5]={
     cerr<<"Finishing Task"<<endl;
     char* arr=(char*)malloc(retString.length());
     strcpy(arr,retString.c_str());
-
-    delete kadder;
     return arr;
 }
-double elapsed(clock_t begin){
-    clock_t end = clock();
-    return ( double(end - begin) / CLOCKS_PER_SEC);
-
-}
 int main(int argc, char*argv[]){
-    clock_t begin = clock();
-    cout<<runMain(argc,argv)<<" "<<argv[argc-1];
-    cout<<"\t"<<elapsed(begin)<<endl;
-
+    cout<<runMain(argc,argv)<<" "<<argv[argc-1]<<endl;
     return 0;
     /* KnowlesAdder<32>*kadder; */
     /* kadder=new KnowlesAdder<32>(); */

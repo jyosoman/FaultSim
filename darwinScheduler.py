@@ -56,7 +56,7 @@ def f(i):
         lock.release()
         # res=call_c([l[0],"/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10)])
         # print >>f, "%d %s",(l, res)
-        call(["./build/test/bmTestAdder.exe",l[0]+".Adder.txt",(l[1]),str(int(l[1])+10),dpoint,l[0]],stdout=f)
+        call(["./build/test/bmTestAdder.exe",l[0]+".Adder.txt",(l[1]),str(int(l[1])+1),dpoint,l[0]],stdout=f)
 
 
 
@@ -65,7 +65,7 @@ for i in range(0,258):
     lists=[]
     lists.append(val)
     # strv="ef"+str(i)+".txt"
-    lists.append(str(i*10))
+    lists.append(str(i*5))
     # lists.append(strv)
     the_queue.put(list(lists))
 

@@ -3,32 +3,7 @@ import ctypes
 from multiprocessing import Process, Lock, Queue
 lock = Lock()
 the_queue = Queue()
-def call_c( L ):
-        bmTester = ctypes.cdll.LoadLibrary('./build/pythonTesting/bmTestAdder.so')
-        arr = (ctypes.c_char_p * (len(L) + 1))()
-        bmTester.runMain.restype = ctypes.c_char_p
-        arr[:-1] = L
-        arr[ len(L) ] = None
-        result = bmTester.runMain(len(L),arr)
-        del bmTester
-        return result
-
-def f(i):
-    f = open('workfile'+str(i)+".txt", 'w')
-    while not the_queue.empty():
-        lock.acquire()
-        if not the_queue.empty():
-            l = the_queue.get(False)
-        else:
-            lock.release()
-            break
-        lock.release()
-        # res=call_c([l[0],"/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10)])
-        # print >>f, "%d %s",(l, res)
-        call(["./build/test/bmTestAdder.exe","/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10),str(0),l[0]],stdout=f)
-
-
-
+import sys
 
 array=["astar_biglakes",
         "bwaves",
@@ -55,16 +30,44 @@ array=["astar_biglakes",
         "tonto",
         "zeusmp"]
 
+x=int(sys.argv[1])
+val=array[x]
+dpoint=sys.argv[2]
 
-for val in array:
-    for i in range(0,258):
-            lists=[]
-            lists.append(val)
-            # strv="ef"+str(i)+".txt"
-            lists.append(str(i*10))
-            # lists.append(strv)
-            the_queue.put(list(lists))
+def call_c( L ):
+        bmTester = ctypes.cdll.LoadLibrary('./build/pythonTesting/bmTestAdder.so')
+        arr = (ctypes.c_char_p * (len(L) + 1))()
+        bmTester.runMain.restype = ctypes.c_char_p
+        arr[:-1] = L
+        arr[ len(L) ] = None
+        result = bmTester.runMain(len(L),arr)
+        del bmTester
+        return result
+
+def f(i):
+    f = open('workfileSingle'+str(i)+val+dpoint+".txt", 'w')
+    while not the_queue.empty():
+        lock.acquire()
+        if not the_queue.empty():
+            l = the_queue.get(False)
+        else:
+            lock.release()
+            break
+        lock.release()
+        # res=call_c([l[0],"/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10)])
+        # print >>f, "%d %s",(l, res)
+        call(["./build/test/bmTestAdder.exe",l[0]+".Adder.txt",(l[1]),str(int(l[1])+1),dpoint,l[0]],stdout=f)
+
+
+
+
+for i in range(0,230,10):
+    lists=[]
+    lists.append(val)
+    # strv="ef"+str(i)+".txt"
+    lists.append(str(i*11))
+    # lists.append(strv)
+    the_queue.put(list(lists))
 
 for i in range(5):
-    print str(i)
     Process(target=f, args=(str(i))).start()

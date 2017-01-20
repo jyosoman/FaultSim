@@ -30,9 +30,7 @@ array=["astar_biglakes",
         "tonto",
         "zeusmp"]
 
-x=int(sys.argv[1])
-val=array[x]
-dpoint=sys.argv[2]
+
 
 def call_c( L ):
         bmTester = ctypes.cdll.LoadLibrary('./build/pythonTesting/bmTestAdder.so')
@@ -45,7 +43,7 @@ def call_c( L ):
         return result
 
 def f(i):
-    f = open('workfileSingle'+str(i)+val+dpoint+".txt", 'w')
+    f = open('output/'+str(i)+"rand.txt", 'w')
     while not the_queue.empty():
         lock.acquire()
         if not the_queue.empty():
@@ -54,20 +52,19 @@ def f(i):
             lock.release()
             break
         lock.release()
-        # res=call_c([l[0],"/local/LargeDisk/gem5/takeLogs/pirafix/"+l[0]+".Adder.txt",(l[1]),str(int(l[1])+10)])
-        # print >>f, "%d %s",(l, res)
-        call(["./build/test/bmTestAdder.exe",l[0]+".Adder.txt",(l[1]),str(int(l[1])+1),dpoint,l[0]],stdout=f)
+        for j in range(0,42):
+            print l,j
+#            call(["./build/test/bmTestAdder.exe",l[0]+i+".Adder.txt",(l[1]),str(int(l[1])+1),str(j),l[0]],stdout=f)
 
 
 
 
-for i in range(0,230,10):
-    lists=[]
-    lists.append(val)
-    # strv="ef"+str(i)+".txt"
-    lists.append(str(i*11))
-    # lists.append(strv)
-    the_queue.put(list(lists))
-
-for i in range(5):
-    Process(target=f, args=(str(i))).start()
+for i in range(0,210,1):
+        lists=[]
+        lists.append("rand")
+        # strv="ef"+str(i)+".txt"
+        lists.append(str(i*12))
+        the_queue.put(list(lists))
+for i in range(31):
+    p=Process(target=f, args=(str(i),))
+    p.start()

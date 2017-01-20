@@ -154,7 +154,6 @@ int larr[42][5]={
     char* arr=(char*)malloc(retString.length());
     strcpy(arr,retString.c_str());
 
-    delete kadder;
     return arr;
 }
 double elapsed(clock_t begin){

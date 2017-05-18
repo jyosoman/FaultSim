@@ -2,8 +2,8 @@
 #include<cstdlib>
 #include"testInfra.hh"
 void process(int*arr){
-    KnowlesAdder<32>*kadder;
-    kadder=new KnowlesAdder<32>(arr);
+    KnowlesAdder<32,5>*kadder;
+    kadder=new KnowlesAdder<32,5>(arr);
     Tester<32,32,32> T(kadder);
     uint32_t x,y,r;
     for(int j=0;j<5;j++){
@@ -39,27 +39,6 @@ int main(int argc, char*argv[]){
     int*arr=(int*)calloc(5,sizeof(int));
     getLC(0,0,arr);
     return 0;
-    KnowlesAdder<32>*kadder;
-    kadder=new KnowlesAdder<32>();
-    Tester<32,32,32> T(kadder);
-    /* cout<<"Testing begins"<<endl; */
-    /* T.testVal(0xffffffff,0xffffffff); */
-    /* T.testVal(0x7000,0x9000); */
-    /* T.testVal(0x0070,0x0090); */
-    /* T.testVal(0xefffffff,0xfefefefe); */
-    uint32_t x,y,r;
-    /* for(int i=0;i<1000000;i++){ */
-    /*     x=rand(); */
-    /*     y=rand(); */
-    /*     r=T.testVal(x,y); */
-    /*     if(r!=(x+y)){ */
-    /*         printf("%u %u: %u X %u\n",x,y,r,x+y); */
-    /*     } */
-    /* } */
-    if(argc>1){
-        x=strtol(argv[1],NULL,16);
-        y=strtol(argv[2],NULL,16);
-        r=T.testVal(x,y);
-        printf("%u %u: %u X %u\n",x,y,r,x+y);
-    }
+
+
 }

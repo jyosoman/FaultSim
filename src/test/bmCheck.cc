@@ -5,42 +5,9 @@
 #include<cstring>
 #include<ctime>
 #include<functional>
-void process(int*arr){
-    KnowlesAdder<32>*kadder;
-    kadder=new KnowlesAdder<32>(arr);
-    Tester<32,32,32> T(kadder);
-    uint32_t x,y,r;
-    for(int j=0;j<5;j++){
-        cout<<arr[j]<<"\t";
-    }
-    cout<<endl;
 
-    for(int i=0;i<1000000;i++){
-        x=rand();
-        y=rand();
-        r=T.testVal(x,y);
-        if(r!=(x+y)){
-            for(int j=0;j<5;j++){
-                cout<<arr[j]<<"\t";
-            }
-            printf("%u %u: %u x %u\n",x,y,r,x+y);
-        }
-    }
-
-}
-void getLC(int l, int c,int *arr){
-    if (l==5){
-        process(arr);
-        return ;
-    }
-    for(int i=c;i<=l;i++){
-        arr[l]=i;
-        getLC(l+1,i,arr);
-    }
-    return ;
-}
 extern "C" char* runMain(int argc, char*argv[]){
-    KnowlesAdder<32>*kadder;
+    KnowlesAdder<32,5>*kadder;
 int larr[42][5]={
     {0,0,0,0,0},
 {0,0,0,0,1},
@@ -94,7 +61,7 @@ int larr[42][5]={
         }
 
 
-        kadder=new KnowlesAdder<32>(dataArr);
+        kadder=new KnowlesAdder<32,5>(dataArr);
         Tester<32,32,32> T(kadder);
         long int varPos[32],varMax[32];
         for(int i=0;i<32;i++){

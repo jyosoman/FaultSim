@@ -90,7 +90,8 @@ extern "C" char* runMain(int argc, char*argv[]){
         unsigned int x=0,y=0,z=0,ec=0;
         char arr[50];
         int rv;
-        unsigned int xarr[numTest],yarr[numTest];
+        unsigned int *xarr=(unsigned int*)calloc(numTest,sizeof(int));
+        unsigned int* yarr=(unsigned int*)calloc(numTest,sizeof(int));
         for(int i=0;i<numTest;i++){
             xarr[i]=rand()%16;
             yarr[i]=rand()%16;
